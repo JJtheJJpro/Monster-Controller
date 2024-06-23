@@ -1,0 +1,16 @@
+[package]
+name = "monsters-console"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serialport = "4.3.0"
+dialog = "0.3.0"
+
+[target.'cfg(windows)'.dependencies]
+wmi = "0.13.3"
+winapi = { version = "0.3.9", features = ["fileapi", "handleapi", "winbase", "winnt", "ioapiset"] }
+
+[target.'cfg(unix)'.dependencies]
+libudev-sys = "0.1.4"
+nix = { version = "0.29.0", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }
