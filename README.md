@@ -6,10 +6,11 @@ This is a number of programs, made in different languages, that have the same pu
 
 To keep the programs cross-platform, I've been able to use a differnt number of languages:
 
-- C#
+- C# (UI)
 - Rust (console (found in 'Rust') and using Tauri (found in 'Tauri'))
+- Python (console)
 
-C# is only UI (no console option)
+The Arduino code is found in the ArduinoSoftware folder.
 
 ## Currently working on: C#
 

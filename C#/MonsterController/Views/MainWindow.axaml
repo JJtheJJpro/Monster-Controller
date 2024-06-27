@@ -6,9 +6,11 @@
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="MonsterController.Views.MainWindow"
     x:DataType="vm:MainWindowViewModel"
-    Icon="/Assets/avalonia-logo.ico"
+    Icon="/Assets/jj-icon.ico"
     Width="800"
     Height="600"
+    MinWidth="800"
+    MinHeight="600"
     Title="MonsterController"
     Background="Black">
 
@@ -18,7 +20,7 @@
             <Setter Property="FontSize" Value="20" />
         </Style>
 
-        <Style Selector="Button">
+        <Style Selector="Button.sendcmd">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="TextBlock.Foreground" Value="Red" />
 
@@ -32,6 +34,60 @@
                 <Setter Property="TextBlock.Foreground" Value="Red" />
             </Style>
         </Style>
+
+        <Style Selector="Border.m">
+            <Setter Property="BorderBrush" Value="Red" />
+            <Setter Property="BorderThickness" Value="1,1,1,1" />
+
+            <Style Selector="^.l">
+                <Setter Property="BorderThickness" Value="0,1,1,1" />
+            </Style>
+
+            <Style Selector="^.t">
+                <Setter Property="BorderThickness" Value="1,2,1,1" />
+            </Style>
+            <Style Selector="^.r">
+                <Setter Property="BorderThickness" Value="1,1,0,1" />
+            </Style>
+            <Style Selector="^.b">
+                <Setter Property="BorderThickness" Value="1,1,1,2" />
+            </Style>
+
+            <Style Selector="^.tl">
+                <Setter Property="BorderThickness" Value="0,2,1,1" />
+            </Style>
+            <Style Selector="^.tr">
+                <Setter Property="BorderThickness" Value="1,2,0,1" />
+            </Style>
+            <Style Selector="^.bl">
+                <Setter Property="BorderThickness" Value="0,1,1,2" />
+            </Style>
+            <Style Selector="^.br">
+                <Setter Property="BorderThickness" Value="1,1,0,2" />
+            </Style>
+
+            <Style Selector="^.d">
+                <Setter Property="BorderThickness" Value="1,1,1,2" />
+            </Style>
+            <Style Selector="^.dhelp">
+                <Setter Property="BorderThickness" Value="0,1,1,0" />
+            </Style>
+            <Style Selector="^.help">
+                <Setter Property="BorderThickness" Value="0,1,0,0" />
+            </Style>
+
+            <Style Selector="^.keybd">
+                <Setter Property="BorderThickness" Value="0,2,1,0" />
+            </Style>
+            <Style Selector="^.gui">
+                <Setter Property="BorderThickness" Value="1,2,1,0" />
+            </Style>
+            <Style Selector="^.web">
+                <Setter Property="BorderThickness" Value="1,2,0,0" />
+            </Style>
+
+        </Style>
+
     </Window.Styles>
 
     <Design.DataContext>
@@ -41,50 +97,215 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <StackPanel Margin="20" HorizontalAlignment="Stretch">
-        <TextBlock Text="Listening for USB changes..." />
+    <DockPanel LastChildFill="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel DockPanel.Dock="Top">
+            <StackPanel Margin="20">
+                <TextBlock Text="Listening for USB changes..." />
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Watermark="Put custom command here" FontSize="20" />
+                    <Button Classes="sendcmd" FontSize="20">Send</Button>
+                </StackPanel>
+            </StackPanel>
 
-        <Grid HorizontalAlignment="Stretch">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-    
-            <Border Grid.Row="0" Grid.Column="0" Background="LightGray" Padding="5">
-                <TextBlock Text="Header 1" />
+            <Grid Margin="0,20,0,0" ColumnDefinitions="*,*,*,*,*,*,*,*,*,*"
+                RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+
+                <!-- Names Row -->
+                <Border Classes="m tl" Grid.Row="0" Grid.Column="0" Padding="5">
+                    <TextBlock Text="Monster 1" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="1" Padding="5">
+                    <TextBlock Text="Monster 2" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="2" Padding="5">
+                    <TextBlock Text="Monster 3" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="3" Padding="5">
+                    <TextBlock Text="Monster 4" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="4" Padding="5">
+                    <TextBlock Text="Monster 5" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="5" Padding="5">
+                    <TextBlock Text="Monster 6" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="6" Padding="5">
+                    <TextBlock Text="Monster 7" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="7" Padding="5">
+                    <TextBlock Text="Monster 8" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m t" Grid.Row="0" Grid.Column="8" Padding="5">
+                    <TextBlock Text="Monster 9" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m tr" Grid.Row="0" Grid.Column="9" Padding="5">
+                    <TextBlock Text="Monster 10" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+
+                <!-- Power Row -->
+                <Border Classes="m l" Grid.Row="1" Grid.Column="0" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="1" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="2" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="3" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="4" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="5" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="6" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="7" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="1" Grid.Column="8" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m r" Grid.Row="1" Grid.Column="9" Padding="5">
+                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+
+                <!-- Activate Row -->
+                <Border Classes="m l" Grid.Row="2" Grid.Column="0" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="1" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="2" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="3" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="4" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="5" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="6" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="7" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="2" Grid.Column="8" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m r" Grid.Row="2" Grid.Column="9" Padding="5">
+                    <TextBlock Text="Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+
+                <!-- Alternate Activate Row -->
+                <Border Classes="m l" Grid.Row="3" Grid.Column="0" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="1" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="2" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="3" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="4" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="5" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="6" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="7" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m" Grid.Row="3" Grid.Column="8" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m r" Grid.Row="3" Grid.Column="9" Padding="5">
+                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+
+                <!-- Door and Garbage -->
+                <Border Classes="m help" Grid.Row="4" Grid.Column="0" Padding="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="1" Padding="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="2" Padding="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="3" Padding="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="4" Padding="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="5" Padding="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="6" Padding="5" />
+                <Border Classes="m dhelp" Grid.Row="4" Grid.Column="7" Padding="5" />
+                <Border Classes="m d" Grid.Row="4" Grid.Column="8" Padding="5">
+                    <TextBlock Text="Door" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <Border Classes="m br" Grid.Row="4" Grid.Column="9" Padding="5">
+                    <TextBlock Text="Garbage" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+        </StackPanel>
+
+        <Grid ColumnDefinitions="*,*,*"
+            RowDefinitions="90" DockPanel.Dock="Bottom">
+
+            <Border Classes="m keybd" Grid.Row="0" Grid.Column="0" Padding="5">
+                <TextBlock Text="Keyboard" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
             </Border>
-    
-            <Border Grid.Row="0" Grid.Column="1" Background="LightGray" Padding="5">
-                <TextBlock Text="Header 2" />
+            <Border Classes="m gui" Grid.Row="0" Grid.Column="1" Padding="5">
+                <TextBlock Text="GUI" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
             </Border>
-            
-            <!-- Rows -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            
-            <!-- First Row -->
-            <Border Grid.Row="1" Grid.Column="0" Padding="5">
-                <TextBlock Text="Data 1" />
+            <Border Classes="m web" Grid.Row="0" Grid.Column="2" Padding="5">
+                <TextBlock Text="Website" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
             </Border>
-            <Border Grid.Row="1" Grid.Column="1" Padding="5">
-                <TextBlock Text="Data 2" />
-            </Border>
-            
-            <!-- Second Row -->
-            <Border Grid.Row="2" Grid.Column="0" Padding="5">
-                <TextBlock Text="Data 3" />
-            </Border>
-            <Border Grid.Row="2" Grid.Column="1" Padding="5">
-                <TextBlock Text="Data 4" />
-            </Border>
+
         </Grid>
-    </StackPanel>
+    </DockPanel>
 
-    
 
 </Window>
