@@ -58,26 +58,26 @@ def update_visual(update: bool = False):
     print(f'█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████')
     print(f'█ Monster 1 █ Monster 2 █ Monster 3 █ Monster 4 █ Monster 5 █ Monster 6 █ Monster 7 █ Monster 8 █ Monster 9 █ Monster10 █')
     print(f'█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████')
-    print(f'█ {f'{M_ACT}{P}{M_END}' if monster_data[0] == 1 else P} █ {f'{M_ACT}{P}{M_END}' if monster_data[1] == 1 else P} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[2] == 1 else P} █ {f'{M_ACT}{P}{M_END}' if monster_data[3] == 1 else P} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[4] == 1 else P} █ {f'{M_ACT}{P}{M_END}' if monster_data[5] == 1 else P} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[6] == 1 else P} █ {f'{M_ACT}{P}{M_END}' if monster_data[7] == 1 else P} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[8] == 1 else P} █ {f'{M_ACT}{P}{M_END}' if monster_data[9] == 1 else P} █')
+    print(f'█ {f"{M_ACT}{P}{M_END}" if monster_data[0] == 1 else P} █ {f"{M_ACT}{P}{M_END}" if monster_data[1] == 1 else P} ' + \
+          f'█ {f"{M_ACT}{P}{M_END}" if monster_data[2] == 1 else P} █ {f"{M_ACT}{P}{M_END}" if monster_data[3] == 1 else P} ' + \
+          f'█ {f"{M_ACT}{P}{M_END}" if monster_data[4] == 1 else P} █ {f"{M_ACT}{P}{M_END}" if monster_data[5] == 1 else P} ' + \
+          f'█ {f"{M_ACT}{P}{M_END}" if monster_data[6] == 1 else P} █ {f"{M_ACT}{P}{M_END}" if monster_data[7] == 1 else P} ' + \
+          f'█ {f"{M_ACT}{P}{M_END}" if monster_data[8] == 1 else P} █ {f"{M_ACT}{P}{M_END}" if monster_data[9] == 1 else P} █')
     print(f'█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████')
-    print(f'█ {f'{M_ACT}{P}{M_END}' if monster_data[10] == 1 else A} █ {f'{M_ACT}{P}{M_END}' if monster_data[11] == 1 else A} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[12] == 1 else A} █ {f'{M_ACT}{P}{M_END}' if monster_data[13] == 1 else A} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[14] == 1 else A} █ {f'{M_ACT}{P}{M_END}' if monster_data[15] == 1 else A} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[16] == 1 else A} █ {f'{M_ACT}{P}{M_END}' if monster_data[17] == 1 else A} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[18] == 1 else A} █ {f'{M_ACT}{P}{M_END}' if monster_data[19] == 1 else A} █')
+    print(f'█ {f"{M_ACT}{A}{M_END}" if monster_data[10] == 1 else A} █ {f"{M_ACT}{A}{M_END}" if monster_data[11] == 1 else A} ' + \
+          f'█ {f"{M_ACT}{A}{M_END}" if monster_data[12] == 1 else A} █ {f"{M_ACT}{A}{M_END}" if monster_data[13] == 1 else A} ' + \
+          f'█ {f"{M_ACT}{A}{M_END}" if monster_data[14] == 1 else A} █ {f"{M_ACT}{A}{M_END}" if monster_data[15] == 1 else A} ' + \
+          f'█ {f"{M_ACT}{A}{M_END}" if monster_data[16] == 1 else A} █ {f"{M_ACT}{A}{M_END}" if monster_data[17] == 1 else A} ' + \
+          f'█ {f"{M_ACT}{A}{M_END}" if monster_data[18] == 1 else A} █ {f"{M_ACT}{A}{M_END}" if monster_data[19] == 1 else A} █')
     print(f'█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████')
-    print(f'█ {f'{M_ACT}{P}{M_END}' if monster_data[20] == 1 else X} █ {f'{M_ACT}{P}{M_END}' if monster_data[21] == 1 else X} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[22] == 1 else X} █ {f'{M_ACT}{P}{M_END}' if monster_data[23] == 1 else X} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[24] == 1 else X} █ {f'{M_ACT}{P}{M_END}' if monster_data[25] == 1 else X} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[26] == 1 else X} █ {f'{M_ACT}{P}{M_END}' if monster_data[27] == 1 else X} ' + \
-          f'█ {f'{M_ACT}{P}{M_END}' if monster_data[28] == 1 else X} █ {f'{M_ACT}{P}{M_END}' if monster_data[29] == 1 else X} █')
+    print(f'█ {f"{M_ACT}{X}{M_END}" if monster_data[20] == 1 else X} █ {f"{M_ACT}{X}{M_END}" if monster_data[21] == 1 else X} ' + \
+          f'█ {f"{M_ACT}{X}{M_END}" if monster_data[22] == 1 else X} █ {f"{M_ACT}{X}{M_END}" if monster_data[23] == 1 else X} ' + \
+          f'█ {f"{M_ACT}{X}{M_END}" if monster_data[24] == 1 else X} █ {f"{M_ACT}{X}{M_END}" if monster_data[25] == 1 else X} ' + \
+          f'█ {f"{M_ACT}{X}{M_END}" if monster_data[26] == 1 else X} █ {f"{M_ACT}{X}{M_END}" if monster_data[27] == 1 else X} ' + \
+          f'█ {f"{M_ACT}{X}{M_END}" if monster_data[28] == 1 else X} █ {f"{M_ACT}{X}{M_END}" if monster_data[29] == 1 else X} █')
     print(f'█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████')
     print(f'█                                                                                               ' + \
-          f'█ {f'{M_ACT}  Door   {M_END}' if monster_data[30] == 1 else '  Door   '} █ {f'{M_ACT} Garbage {M_END}' if monster_data[31] == 1 else ' Garbage '} █')
+          f'█ {f"{M_ACT}  Door   {M_END}" if monster_data[30] == 1 else "  Door   "} █ {f"{M_ACT} Garbage {M_END}" if monster_data[31] == 1 else " Garbage "} █')
     print(f'█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████')
 
 def parse_monster(on: bool, type: int, monster: int):
