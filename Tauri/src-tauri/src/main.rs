@@ -5,6 +5,7 @@ extern crate libudev_sys as udev;
 
 use dialog::DialogBox;
 use serialport::SerialPortType;
+use winapi::um::commapi::GetCommState;
 use std::{
     io::{stdout, Write},
     sync::mpsc::{self, Sender},
@@ -313,8 +314,8 @@ fn port_listener(tx: Sender<String>) {
                                     let mut sp: DCB = unsafe { zeroed() };
                                     sp.DCBlength = size_of::<DCB>() as u32;
                                     unsafe {
-                                        SetCommState(serial, &mut sp);
-                                        check_err("SetCommState");
+                                        GetCommState(serial, &mut sp);
+                                        check_err("GetCommState");
                                     }
 
                                     if sp.BaudRate != CBR_9600

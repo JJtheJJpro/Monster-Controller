@@ -8,6 +8,11 @@
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+
+    <Application.Resources>
+        <local:HalfHeightConverter x:Key="HalfHeightConverter" />
+        <local:EighthHeightConverter x:Key="EighthHeightConverter" />
+    </Application.Resources>
   
     <Application.Styles>
         <FluentTheme />

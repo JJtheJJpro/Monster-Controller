@@ -7,8 +7,6 @@
     x:Class="MonsterController.Views.MainWindow"
     x:DataType="vm:MainWindowViewModel"
     Icon="/Assets/jj-icon.ico"
-    Width="800"
-    Height="600"
     MinWidth="800"
     MinHeight="600"
     Title="MonsterController"
@@ -32,6 +30,38 @@
             <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
                 <Setter Property="Background" Value="Red" />
                 <Setter Property="TextBlock.Foreground" Value="Red" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.m">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Cursor" Value="Arrow" />
+
+            <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Foreground" Value="Red" />
+                <Setter Property="Background" Value="#300000" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="RenderTransform" Value="" />
+            </Style>
+            <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Foreground" Value="Red" />
+                <Setter Property="Background" Value="DarkRed" />
+            </Style>
+
+            <Style Selector="^.on">
+                <Setter Property="Background" Value="Red" />
+                <Setter Property="Foreground" Value="Red" />
             </Style>
         </Style>
 
@@ -108,200 +138,207 @@
             </StackPanel>
 
             <Grid Margin="0,20,0,0" ColumnDefinitions="*,*,*,*,*,*,*,*,*,*"
-                RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                RowDefinitions="*,*,*,*,*"
+                Height="{Binding Height, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource HalfHeightConverter}}">
 
                 <!-- Names Row -->
-                <Border Classes="m tl" Grid.Row="0" Grid.Column="0" Padding="5">
-                    <TextBlock Text="Monster 1" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m tl" Grid.Row="0" Grid.Column="0">
+                    <Button Classes="m" Content="{Binding Monster1}" Cursor="Hand" Click="MCM1">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="1" Padding="5">
-                    <TextBlock Text="Monster 2" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="1">
+                    <Button Classes="m" Content="{Binding Monster2}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="2" Padding="5">
-                    <TextBlock Text="Monster 3" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="2">
+                    <Button Classes="m" Content="{Binding Monster3}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="3" Padding="5">
-                    <TextBlock Text="Monster 4" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="3">
+                    <Button Classes="m" Content="{Binding Monster4}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="4" Padding="5">
-                    <TextBlock Text="Monster 5" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="4">
+                    <Button Classes="m" Content="{Binding Monster5}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="5" Padding="5">
-                    <TextBlock Text="Monster 6" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="5">
+                    <Button Classes="m" Content="{Binding Monster6}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="6" Padding="5">
-                    <TextBlock Text="Monster 7" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="6">
+                    <Button Classes="m" Content="{Binding Monster7}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="7" Padding="5">
-                    <TextBlock Text="Monster 8" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="7">
+                    <Button Classes="m" Content="{Binding Monster8}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m t" Grid.Row="0" Grid.Column="8" Padding="5">
-                    <TextBlock Text="Monster 9" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m t" Grid.Row="0" Grid.Column="8">
+                    <Button Classes="m" Content="{Binding Monster9}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
-                <Border Classes="m tr" Grid.Row="0" Grid.Column="9" Padding="5">
-                    <TextBlock Text="Monster 10" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m tr" Grid.Row="0" Grid.Column="9">
+                    <Button Classes="m" Content="{Binding Monster10}" Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock FontSize="16" Text="Double-click to change name" />
+                        </ToolTip.Tip>
+                    </Button>
                 </Border>
 
                 <!-- Power Row -->
-                <Border Classes="m l" Grid.Row="1" Grid.Column="0" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m l" Grid.Row="1" Grid.Column="0">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="1" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="1">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="2" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="2">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="3" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="3">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="4" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="4">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="5" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="5">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="6" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="6">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="7" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="7">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m" Grid.Row="1" Grid.Column="8" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="1" Grid.Column="8">
+                    <Button Classes="m" Content="Power" />
                 </Border>
-                <Border Classes="m r" Grid.Row="1" Grid.Column="9" Padding="5">
-                    <TextBlock Text="Power" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Classes="m r" Grid.Row="1" Grid.Column="9">
+                    <Button Classes="m" Content="Power" />
                 </Border>
 
                 <!-- Activate Row -->
-                <Border Classes="m l" Grid.Row="2" Grid.Column="0" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m l" Grid.Row="2" Grid.Column="0">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="1" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="1">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="2" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="2">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="3" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="3">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="4" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="4">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="5" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="5">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="6" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="6">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="7" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="7">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="2" Grid.Column="8" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="2" Grid.Column="8">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
-                <Border Classes="m r" Grid.Row="2" Grid.Column="9" Padding="5">
-                    <TextBlock Text="Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m r" Grid.Row="2" Grid.Column="9">
+                    <Button Classes="m" Content="Activate" />
                 </Border>
 
                 <!-- Alternate Activate Row -->
-                <Border Classes="m l" Grid.Row="3" Grid.Column="0" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m l" Grid.Row="3" Grid.Column="0">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="1" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="1">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="2" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="2">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="3" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="3">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="4" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="4">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="5" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="5">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="6" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="6">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="7" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="7">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m" Grid.Row="3" Grid.Column="8" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m" Grid.Row="3" Grid.Column="8">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
-                <Border Classes="m r" Grid.Row="3" Grid.Column="9" Padding="5">
-                    <TextBlock Text="Alternate Activate" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m r" Grid.Row="3" Grid.Column="9">
+                    <Button Classes="m" Content="Alternate Activate" />
                 </Border>
 
                 <!-- Door and Garbage -->
-                <Border Classes="m help" Grid.Row="4" Grid.Column="0" Padding="5" />
-                <Border Classes="m help" Grid.Row="4" Grid.Column="1" Padding="5" />
-                <Border Classes="m help" Grid.Row="4" Grid.Column="2" Padding="5" />
-                <Border Classes="m help" Grid.Row="4" Grid.Column="3" Padding="5" />
-                <Border Classes="m help" Grid.Row="4" Grid.Column="4" Padding="5" />
-                <Border Classes="m help" Grid.Row="4" Grid.Column="5" Padding="5" />
-                <Border Classes="m help" Grid.Row="4" Grid.Column="6" Padding="5" />
-                <Border Classes="m dhelp" Grid.Row="4" Grid.Column="7" Padding="5" />
-                <Border Classes="m d" Grid.Row="4" Grid.Column="8" Padding="5">
-                    <TextBlock Text="Door" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="0" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="1" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="2" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="3" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="4" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="5" />
+                <Border Classes="m help" Grid.Row="4" Grid.Column="6" />
+                <Border Classes="m dhelp" Grid.Row="4" Grid.Column="7" />
+                <Border Classes="m d" Grid.Row="4" Grid.Column="8">
+                    <Button Classes="m" Content="Door" />
                 </Border>
-                <Border Classes="m br" Grid.Row="4" Grid.Column="9" Padding="5">
-                    <TextBlock Text="Garbage" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                <Border Classes="m br" Grid.Row="4" Grid.Column="9">
+                    <Button Classes="m" Content="Garbage" />
                 </Border>
             </Grid>
         </StackPanel>
 
         <Grid ColumnDefinitions="*,*,*"
-            RowDefinitions="90" DockPanel.Dock="Bottom">
+            RowDefinitions="*" DockPanel.Dock="Bottom"
+            Height="{Binding Height, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EighthHeightConverter}}">
 
-            <Border Classes="m keybd" Grid.Row="0" Grid.Column="0" Padding="5">
-                <TextBlock Text="Keyboard" HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+            <Border Classes="m keybd" Grid.Row="0" Grid.Column="0">
+                <Button Classes="m" Content="Keyboard" />
             </Border>
-            <Border Classes="m gui" Grid.Row="0" Grid.Column="1" Padding="5">
-                <TextBlock Text="GUI" HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+            <Border Classes="m gui" Grid.Row="0" Grid.Column="1">
+                <Button Classes="m" Content="GUI" />
             </Border>
-            <Border Classes="m web" Grid.Row="0" Grid.Column="2" Padding="5">
-                <TextBlock Text="Website" HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+            <Border Classes="m web" Grid.Row="0" Grid.Column="2">
+                <Button Classes="m" Content="Website" />
             </Border>
 
         </Grid>

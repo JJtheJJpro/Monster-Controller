@@ -12,6 +12,4 @@ To keep the programs cross-platform, I've been able to use a differnt number of 
 
 The Arduino code is found in the ArduinoSoftware folder.
 
-## Currently working on: C#
-
-I barely started on C# cross-platform...hush.
+## ...

@@ -1,4 +1,4 @@
-# Run this to publish ($args[0] is platform and $args[1] is true or false depending if you want to trim it)
+# On Windows, run this to publish ($args[0] is platform and $args[1] is true or false depending if you want to trim it)
 
 if ($args.count -eq 2)
 {
