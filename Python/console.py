@@ -92,7 +92,7 @@ def parse_monster(on: bool, type: int, monster: int):
         monster += type * 10
         monster_data[monster] = 1 if on else 0
     monster += 1
-    m = f'{1 if on else 0}{monster.__str__() if monster > 9 else f'0{monster.__str__()}'}\n'
+    m = f'{1 if on else 0}{monster.__str__() if monster > 9 else f"0{monster.__str__()}"}\n'
     ser.write(m.encode())
     update_visual(True)
 
@@ -278,7 +278,7 @@ while True:
     elif read == "arduino":
         print("command requires 1 parameter <data>: 'arduino <data>'")
     elif read.startswith('arduino '):
-        ser.write(f'{read.removeprefix('arduino ')}\n'.encode())
+        ser.write(f'{read.removeprefix("arduino ")}\n'.encode())
     else:
         print('Unknown command')
     update_visual()
