@@ -133,10 +133,10 @@ fn main() {
 
         match find_port() {
             Ok(o_s) => match o_s {
-                Some(port) => {}
+                Some(_) => {}
                 None => {}
             },
-            Err(e) => {}
+            Err(_) => {}
         }
         listen_for_changes();
     }

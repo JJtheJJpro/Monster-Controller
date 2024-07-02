@@ -1,0 +1,7 @@
+.vs
+Debug
+Release
+x64
+Console/Debug
+Console/Release
+Console/x64

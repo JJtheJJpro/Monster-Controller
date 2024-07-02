@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>MonsterController</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <StartupObject></StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="MainForm.cs~RFd4a5e59.TMP" />
+    <None Remove="MainForm.cs~RFd6dfd5d.TMP" />
+    <None Remove="MainForm.cs~RFd7844a7.TMP" />
+    <None Remove="PortCom.cs~RFd4c05bf.TMP" />
+    <None Remove="PortCom.cs~RFd7283a1.TMP" />
+    <None Remove="PortCom.cs~RFd74dce3.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

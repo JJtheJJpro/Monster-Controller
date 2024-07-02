@@ -1,61 +1,61 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-#[cfg(unix)]
-extern crate libudev_sys as udev;
+//#[cfg(unix)]
+//extern crate libudev_sys as udev;
 
-use dialog::DialogBox;
+//use dialog::DialogBox;
 use serialport::SerialPortType;
-use winapi::um::commapi::GetCommState;
 use std::{
-    io::{stdout, Write},
+    mem::zeroed,
     sync::mpsc::{self, Sender},
     thread::{self, spawn},
     time::Duration,
 };
 use tauri::{command, generate_context, generate_handler, Builder, Manager};
+//use winapi::um::commapi::GetCommState;
 
-#[cfg(unix)]
-use nix::{
-    fcntl::{FcntlArg::F_SETFL, OFlag},
-    ioctl_read, ioctl_write_ptr,
-    libc::{cfmakeraw, tcgetattr, tcsetattr},
-    poll::{self, PollFd, PollFlags},
-    sys::signal::SigSet,
-    unistd,
-};
-#[cfg(unix)]
-use std::{ffi::CStr, mem::MaybeUninit, os::fd::BorrowedFd, slice};
+//#[cfg(unix)]
+//use nix::{
+//    fcntl::{FcntlArg::F_SETFL, OFlag},
+//    ioctl_read, ioctl_write_ptr,
+//    libc::{cfmakeraw, tcgetattr, tcsetattr},
+//    poll::{self, PollFd, PollFlags},
+//    sys::signal::SigSet,
+//    unistd,
+//};
+//#[cfg(unix)]
+//use std::{ffi::CStr, mem::MaybeUninit, os::fd::BorrowedFd, slice};
 
-#[cfg(windows)]
-use std::{
-    ffi::OsStr,
-    mem::{size_of, zeroed},
-    ptr::null_mut,
-};
-#[cfg(windows)]
-use winapi::{
-    shared::winerror::ERROR_IO_PENDING,
-    um::{
-        commapi::{EscapeCommFunction, GetCommTimeouts, SetCommState, SetCommTimeouts},
-        errhandlingapi::GetLastError,
-        fileapi::{CreateFileA, ReadFile, WriteFile, OPEN_EXISTING},
-        handleapi::INVALID_HANDLE_VALUE,
-        ioapiset::GetOverlappedResult,
-        minwinbase::OVERLAPPED,
-        winbase::{CBR_9600, COMMTIMEOUTS, DCB, FILE_FLAG_OVERLAPPED, SETDTR},
-        winnt::{GENERIC_READ, GENERIC_WRITE},
-    },
-};
+//#[cfg(windows)]
+//use std::{
+//    ffi::OsStr,
+//    mem::{size_of, zeroed},
+//    ptr::null_mut,
+//};
+//#[cfg(windows)]
+//use winapi::{
+//    shared::winerror::ERROR_IO_PENDING,
+//    um::{
+//        commapi::{EscapeCommFunction, GetCommTimeouts, SetCommState, SetCommTimeouts},
+//        errhandlingapi::GetLastError,
+//        fileapi::{CreateFileA, ReadFile, WriteFile, OPEN_EXISTING},
+//        handleapi::INVALID_HANDLE_VALUE,
+//        ioapiset::GetOverlappedResult,
+//        minwinbase::OVERLAPPED,
+//        winbase::{CBR_9600, COMMTIMEOUTS, DCB, FILE_FLAG_OVERLAPPED, SETDTR},
+//        winnt::{GENERIC_READ, GENERIC_WRITE},
+//    },
+//};
 
-#[cfg(windows)]
-fn check_err(m: &str) {
-    unsafe {
-        let err = GetLastError();
-        if err > 0 {
-            panic!("{m} err 0x{err:x}");
-        }
-    }
-}
+//#[cfg(windows)]
+//fn check_err(m: &str) {
+//    unsafe {
+//        let err = GetLastError();
+//        if err > 0 {
+//            panic!("{m} err 0x{err:x}");
+//        }
+//    }
+//}
 
 #[cfg(windows)]
 fn listen_usb() {
@@ -180,11 +180,13 @@ fn listen_usb() {
     }
 }
 
-#[cfg(windows)]
-static mut PORT: u32 = 0;
+//#[cfg(windows)]
+//static mut PORT: u32 = 0;
 
-#[cfg(unix)]
-static mut PORT: i32 = 0;
+static mut PORT: serial2::SerialPort = unsafe { zeroed() };
+
+//#[cfg(unix)]
+//static mut PORT: i32 = 0;
 
 #[command]
 fn console(msg: &str) {
@@ -194,6 +196,12 @@ fn console(msg: &str) {
 #[cfg(windows)]
 #[command]
 fn send(msg: &str) {
+    let m = format!("{msg}\n");
+    unsafe {
+        PORT.write(m.as_bytes()).unwrap();
+    }
+
+    /*
     //println!("send start");
     let r = unsafe {
         let mut overlapped: OVERLAPPED = zeroed();
@@ -223,6 +231,7 @@ fn send(msg: &str) {
         //panic!("WriteFile spec err {r}");
     }
     //println!("send end");
+    */
 }
 
 #[cfg(unix)]
@@ -278,6 +287,54 @@ fn port_listener(tx: Sender<String>) {
                     match lport.port_type {
                         SerialPortType::UsbPort(port) => {
                             if port.vid == 0x2341 && port.pid == 0x0042 {
+                                let mut sport =
+                                    serial2::SerialPort::open(lport.port_name, 9600).unwrap();
+                                sport.set_read_timeout(Duration::MAX).unwrap();
+                                sport.set_write_timeout(Duration::MAX).unwrap();
+                                sport.set_dtr(true).unwrap();
+                                unsafe {
+                                    PORT = sport.try_clone().unwrap();
+                                }
+
+                                let mut string_builder = String::new();
+
+                                loop {
+                                    let mut buf = [0; 1];
+                                    match sport.read(&mut buf) {
+                                        Ok(_) => {
+                                            print!(
+                                                "{}",
+                                                String::from_utf8(buf.to_vec())
+                                                    .unwrap()
+                                                    .replace("\0", "")
+                                            );
+                                            string_builder += &String::from_utf8(buf.to_vec())
+                                                .unwrap()
+                                                .replace("\0", "");
+                                        }
+                                        Err(e) => {
+                                            eprintln!("{e}");
+                                            break;
+                                        }
+                                    }
+
+                                    if string_builder.ends_with("\r\n") {
+                                        string_builder = string_builder.replace("\r\n", "");
+
+                                        if string_builder == "Ready" {
+                                            tx.send(String::from("connected")).unwrap();
+                                        } else if string_builder == "testing..." {
+                                            tx.send(String::from("test start")).unwrap();
+                                        } else if string_builder == "done" {
+                                            tx.send(String::from("test end")).unwrap();
+                                        }
+                                    }
+                                }
+                            }
+
+                            /*
+
+                            if port.vid == 0x2341 && port.pid == 0x0042 {
                                 tx.send(String::from("connecting")).unwrap();
                                 //println!("{}", lport.port_name);
 
@@ -329,7 +386,6 @@ fn port_listener(tx: Sender<String>) {
                                             SetCommState(serial, &mut sp);
                                             check_err("SetCommState");
                                         }
-                                        std::thread::sleep(Duration::from_millis(100));
                                     }
 
                                     let mut timeout: COMMTIMEOUTS = unsafe { zeroed() };
@@ -358,8 +414,6 @@ fn port_listener(tx: Sender<String>) {
                                     unsafe {
                                         PORT = serial as u32;
                                     }
-
-                                    send("On");
 
                                     let mut string_builder = String::new();
 
@@ -718,6 +772,8 @@ fn port_listener(tx: Sender<String>) {
                                     }
                                 }
                             }
+
+                            */
                         }
                         _ => continue,
                     }
