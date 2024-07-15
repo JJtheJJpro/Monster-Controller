@@ -17,6 +17,8 @@
     <None Remove="PortCom.cs~RFd4c05bf.TMP" />
     <None Remove="PortCom.cs~RFd7283a1.TMP" />
     <None Remove="PortCom.cs~RFd74dce3.TMP" />
+    <None Remove="Program.cs~RF31fc8240.TMP" />
+    <None Remove="Program.cs~RF31fd67cd.TMP" />
   </ItemGroup>
 
   <ItemGroup>

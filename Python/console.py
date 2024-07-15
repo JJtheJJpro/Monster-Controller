@@ -283,6 +283,7 @@ while True:
         print('Unknown command')
     update_visual()
             
+ser.write('RESET\n')
 ser.close()
 print('\033[0m', end='')
 print('exiting...')

@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -20,8 +20,6 @@ function App() {
     const [actType, setInput] = useState(1); // 0 - keyboard, 1 - GUI, 2 - Website
     const [activeMonsters, setActiveMonsters] = useState([...Array(32)].map(() => false));
     const [keyLastPressed, setKeyLastPressed] = useState<string | null>(null);
-
-    const writing = useRef(false);
 
     useEffect(() => {
         console.log(connected);
@@ -418,7 +416,7 @@ function App() {
     }
 
     async function send(msg: String) {
-        invoke("send", { msg });
+        await invoke("send", { msg });
     }
 
     /**
