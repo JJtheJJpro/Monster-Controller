@@ -15,6 +15,7 @@ serde_json = "1"
 serialport = "4.3.0"
 dialog = "0.3.0"
 serial2 = "0.2.26"
+tungstenite = "0.23.0"
 
 [target.'cfg(windows)'.dependencies]
 wmi = "0.13.3"

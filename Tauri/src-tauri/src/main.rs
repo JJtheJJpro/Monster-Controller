@@ -7,12 +7,12 @@
 use serialport::SerialPortType;
 use std::{
     mem::zeroed,
+    net::TcpListener,
     sync::mpsc::{self, Sender},
     thread::{self, spawn},
     time::Duration,
 };
 use tauri::{command, generate_context, generate_handler, Builder, Manager};
-//use winapi::um::commapi::GetCommState;
 
 //#[cfg(unix)]
 //use nix::{
@@ -25,37 +25,6 @@ use tauri::{command, generate_context, generate_handler, Builder, Manager};
 //};
 //#[cfg(unix)]
 //use std::{ffi::CStr, mem::MaybeUninit, os::fd::BorrowedFd, slice};
-
-//#[cfg(windows)]
-//use std::{
-//    ffi::OsStr,
-//    mem::{size_of, zeroed},
-//    ptr::null_mut,
-//};
-//#[cfg(windows)]
-//use winapi::{
-//    shared::winerror::ERROR_IO_PENDING,
-//    um::{
-//        commapi::{EscapeCommFunction, GetCommTimeouts, SetCommState, SetCommTimeouts},
-//        errhandlingapi::GetLastError,
-//        fileapi::{CreateFileA, ReadFile, WriteFile, OPEN_EXISTING},
-//        handleapi::INVALID_HANDLE_VALUE,
-//        ioapiset::GetOverlappedResult,
-//        minwinbase::OVERLAPPED,
-//        winbase::{CBR_9600, COMMTIMEOUTS, DCB, FILE_FLAG_OVERLAPPED, SETDTR},
-//        winnt::{GENERIC_READ, GENERIC_WRITE},
-//    },
-//};
-
-//#[cfg(windows)]
-//fn check_err(m: &str) {
-//    unsafe {
-//        let err = GetLastError();
-//        if err > 0 {
-//            panic!("{m} err 0x{err:x}");
-//        }
-//    }
-//}
 
 #[cfg(windows)]
 fn listen_usb() {
@@ -149,7 +118,6 @@ fn listen_usb() {
 
 static mut PORT: serial2::SerialPort = unsafe { zeroed() };
 
-//#[cfg(windows)]
 #[command]
 fn send(msg: &str) {
     let m = format!("{msg}\n");
@@ -231,6 +199,42 @@ fn port_listener(tx: Sender<String>) {
     });
 }
 
+static mut SRV: TcpListener = unsafe { zeroed() };
+
+#[command]
+fn local_server(on: bool) {
+    unsafe {
+        if on {
+            SRV = TcpListener::bind("192.168.1.93:8080").unwrap();
+            println!("Listening on 192.168.1.93:8080");
+    
+            #[cfg(windows)]
+            println!("Possible Windows Firewall rule addition needed");
+    
+            for stream in SRV.incoming() {
+                let stream = stream.unwrap();
+                spawn(|| {
+                    let addr = stream.peer_addr().unwrap().ip();
+                    let mut websocket = tungstenite::accept(stream).unwrap();
+                    println!("{addr} is Connected");
+    
+                    loop {
+                        let msg = websocket.read().unwrap();
+                        println!("{addr}: {msg}");
+    
+                        if msg.is_text() || msg.is_binary() {
+                            websocket.write(msg).unwrap();
+                            websocket.write("Test".into()).unwrap();
+                        }
+                    }
+                });
+            }
+        } else {
+            SRV = zeroed();
+        }
+    }
+}
+
 fn main() {
     Builder::default()
         .setup(|app| {
@@ -238,6 +242,8 @@ fn main() {
             let (tx, rx) = mpsc::channel();
 
             port_listener(tx);
+
+            spawn(|| local_server(true));
 
             spawn(move || {
                 thread::sleep(Duration::from_millis(500));
@@ -249,7 +255,7 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(generate_handler![send])
+        .invoke_handler(generate_handler![send, local_server])
         //.invoke_handler(generate_handler![console])
         .run(generate_context!())
         .expect("error while running tauri application");
