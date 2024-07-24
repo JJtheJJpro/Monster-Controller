@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import "./App.css";
@@ -26,7 +26,7 @@ function App() {
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         const unlisten = listen<String>('data-received', (event) => {
-            console.log(`${event.payload} in ${event.windowLabel}`);
+            console.log(`${event.payload} in ${event.id}`);
             switch (event.payload) {
                 case "port read err":
                     console.log("um");

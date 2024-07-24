@@ -85,7 +85,7 @@ int main(void) {
   PORTG = B00000111;
   PORTL = B11111111;
 
-  int sendInfo = 1;
+  int sendInfo = 0;
 
   Serial.println("Ready");
 

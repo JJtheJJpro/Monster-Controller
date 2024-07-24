@@ -4,19 +4,184 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <Windows.h>
+#include <SetupAPI.h>
+#include <initguid.h>
+#include <devguid.h>
 #include <iostream>
+#include <comdef.h>
+#include <WbemIdl.h>
+#include <atlbase.h>
+#include <cstdlib>
 #include <thread>
 #include <string>
+
+#pragma comment(lib, "setupapi.lib")
+#pragma comment(lib, "wbemuuid.lib")
 
 using namespace std;
 
 OVERLAPPED olw{};
 
+void ListenForUSB()
+{
+    //SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2
+
+    CComPtr<IWbemLocator> locator;
+    CComPtr<IWbemServices> service;
+    CComPtr<IEnumWbemClassObject> enumerator;
+    CComPtr<IWbemClassObject> processor;
+
+    HRESULT hr = CoInitialize(0);
+    if (FAILED(hr))
+    {
+        printf("err %d : %d", hr, GetLastError());
+        exit(0);
+    }
+    hr = CoCreateInstance(CLSID_WbemAdministrativeLocator, NULL, CLSCTX_INPROC_SERVER, IID_IWbemLocator, reinterpret_cast<void**>(&locator));
+    if (FAILED(hr))
+    {
+        printf("err %d : %d", hr, GetLastError());
+        exit(0);
+    }
+    hr = locator->ConnectServer((BSTR)_T("root\\cimv2"), NULL, NULL, NULL, WBEM_FLAG_CONNECT_USE_MAX_WAIT, NULL, NULL, &service);
+    if (FAILED(hr))
+    {
+        printf("err %d : %d", hr, GetLastError());
+        exit(0);
+    }
+    hr = service->ExecNotificationQuery((BSTR)_T("WQL"), (BSTR)_T("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2"), WBEM_FLAG_RETURN_IMMEDIATELY | WBEM_FLAG_FORWARD_ONLY, NULL, &enumerator);
+    if (FAILED(hr))
+    {
+        printf("err %d : %d", hr, GetLastError());
+        exit(0);
+    }
+
+    ULONG retcnt;
+    hr = enumerator->Next(WBEM_INFINITE, 1L, &processor, &retcnt);
+    if (FAILED(hr))
+    {
+        printf("err %d : %d", hr, GetLastError());
+        exit(0);
+    }
+
+    processor.Release();
+    enumerator.Release();
+    service.Release();
+    locator.Release();
+
+    CoUninitialize();
+}
+
+void GetSerialPortName(char* buf)
+{
+    HDEVINFO deviceInfoSet = SetupDiGetClassDevsA(&GUID_DEVCLASS_PORTS, nullptr, nullptr, DIGCF_PRESENT | DIGCF_PROFILE);
+    if (deviceInfoSet == INVALID_HANDLE_VALUE)
+    {
+        printf("Error: Unable to get device info set\n");
+        return;
+    }
+
+    SP_DEVINFO_DATA deviceInfoData{};
+    deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+
+    for (DWORD i = 0; SetupDiEnumDeviceInfo(deviceInfoSet, i, &deviceInfoData); i++)
+    {
+        char deviceInstanceId[256];
+        if (SetupDiGetDeviceInstanceIdA(deviceInfoSet, &deviceInfoData, deviceInstanceId, sizeof(deviceInstanceId), nullptr))
+        {
+            const char* vidPos = strstr(deviceInstanceId, "VID_");
+            const char* pidPos = strstr(deviceInstanceId, "PID_");
+
+            if (vidPos && pidPos)
+            {
+                //printf("Device Instance ID: %s\n", deviceInstanceId);
+
+                char svid[5] = { 0 };
+                char spid[5] = { 0 };
+
+                strncpy_s(svid, vidPos + 4, 4);
+                strncpy_s(spid, pidPos + 4, 4);
+
+                char* end;
+
+                long vid = strtol(svid, &end, 16);
+                if (*end != '\0')
+                {
+                    printf("err\n");
+                }
+                long pid = strtol(spid, &end, 16);
+                if (*end != '\0')
+                {
+                    printf("err\n");
+                }
+
+                //printf("VID: 0x%4X, PID: 0x%4X\n", vid, pid);
+
+                if (vid == 0x2341 && pid == 0x0042)
+                {
+                    char name[256]{};
+                    if (SetupDiGetDeviceRegistryPropertyA(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, nullptr, (PBYTE)name, sizeof(name), nullptr))
+                    {
+                        char* scom = strstr(name, "COM");
+                        if (scom)
+                        {
+                            size_t l = strstr(scom, ")") - scom;
+                            //char com[5];
+                            strncpy(buf, scom, l);
+                            buf[l] = '\0';
+                            SetupDiDestroyDeviceInfoList(deviceInfoSet);
+                            return;
+                            //buf = com;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    SetupDiDestroyDeviceInfoList(deviceInfoSet);
+}
+
 int main()
 {
-    HANDLE serial = CreateFile(TEXT("COM5"), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+    auto STDIN = GetStdHandle(STD_INPUT_HANDLE);
+    INPUT_RECORD InRec;
+    DWORD NumRead;
+    bool found = false;
+
+    loop:
+    char name[5];
+    GetSerialPortName(name);
+    if (!name)
+    {
+        printf("\033[2KListening for Arduino (press esc to exit)...");
+        auto tmp = thread([&InRec, &NumRead, &found, STDIN]
+            {
+                while (!found)
+                {
+                    ReadConsoleInputA(STDIN, &InRec, 1, &NumRead);
+                    if (found)
+                    {
+                        WriteConsoleInputA(STDIN, &InRec, 1, &NumRead);
+                    }
+                    else if (InRec.EventType == KEY_EVENT && InRec.Event.KeyEvent.uChar.AsciiChar == 27)
+                    {
+                        exit(0);
+                    }
+                }
+            }); 
+        tmp.detach();
+        ListenForUSB();
+        goto loop;
+    }
+
+    found = true;
+
+    HANDLE serial = CreateFileA(name, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
     if (serial == INVALID_HANDLE_VALUE)
     {
+        printf(name);
+        printf("Failed to connect to the arduino.");
         return 1;
     }
 
@@ -44,7 +209,21 @@ int main()
 
     EscapeCommFunction(serial, SETDTR);
 
-    auto rthread = thread([serial]
+    bool Continue = TRUE;
+
+    auto clearVisual = []
+        {
+            printf("\033[121D\033[11A");
+
+            for (int i = 0; i < 11; i++)
+            {
+                printf("\033[2K\n");
+            }
+
+            printf("\033[121D\033[11A");
+        };
+
+    auto rthread = thread([serial, clearVisual, &Continue]
         {
             OVERLAPPED ol{};
             string comp;
@@ -62,85 +241,58 @@ int main()
                 }
                 else
                 {
-                    cout << "broken" << endl;
+                    clearVisual();
+                    printf("Arduino Disconnected.  Press any key to exit...");
+                    Continue = FALSE;
                     break;
                 }
             }
         });
 
-    auto M_ACT = "\033[38;2;0;0;0;48;2;255;0;0m"s;
-    auto M_END = "\033[38;2;255;0;0;49m"s;
-
     int data[32]{};
-
-    auto clearVisual = []
-        {
-            cout << "\033[121D\033[11A" << flush;
-
-            for (int i = 0; i < 11; i++)
-            {
-                cout << "\033[2K" << endl;
-            }
-
-            cout << "\033[121D\033[11A" << flush;
-        };
 
     auto updateVisual = [](bool update, int d[32])
         {
-            auto M_ACT = "\033[38;2;0;0;0;48;2;255;0;0m";
-            auto M_END = "\033[38;2;255;0;0;49m";
-
-            auto P = "  Power  "s;
-            auto A = "Activate "s;
-            auto X = "Alt. Act."s;
+            auto P = L"  Power  ";
+            auto A = L"Activate ";
+            auto X = L"Alt. Act.";
+            auto sP = L"\033[38;2;0;0;0;48;2;255;0;0m  Power  \033[38;2;255;0;0;49m";
+            auto sA = L"\033[38;2;0;0;0;48;2;255;0;0mActivate \033[38;2;255;0;0;49m";
+            auto sX = L"\033[38;2;0;0;0;48;2;255;0;0mAlt. Act.\033[38;2;255;0;0;49m";
+            auto sD = L"\033[38;2;0;0;0;48;2;255;0;0m  Door   \033[38;2;255;0;0;49m";
+            auto sG = L"\033[38;2;0;0;0;48;2;255;0;0m Garbage \033[38;2;255;0;0;49m";
 
             if (update)
             {
-                cout << "\033[121D\033[11A" << flush;
+                printf("\033[121D\033[11A");
             }
 
-            cout << "=========================================================================================================================" << endl;
-            cout << "= Monster 1 = Monster 2 = Monster 3 = Monster 4 = Monster 5 = Monster 6 = Monster 7 = Monster 8 = Monster 9 = Monster10 =" << endl;
-            cout << "=========================================================================================================================" << endl;
-            cout << "= " << (d[0] == 1 ? M_ACT + P + M_END : P) << " = " << (d[1] == 1 ? M_ACT + P + M_END : P)
-                << " = " << (d[2] == 1 ? M_ACT + P + M_END : P) << " = " << (d[3] == 1 ? M_ACT + P + M_END : P)
-                << " = " << (d[4] == 1 ? M_ACT + P + M_END : P) << " = " << (d[5] == 1 ? M_ACT + P + M_END : P) 
-                << " = " << (d[6] == 1 ? M_ACT + P + M_END : P) << " = " << (d[7] == 1 ? M_ACT + P + M_END : P) 
-                << " = " << (d[8] == 1 ? M_ACT + P + M_END : P) << " = " << (d[9] == 1 ? M_ACT + P + M_END : P) << " =" << endl;
-            cout << "=========================================================================================================================" << endl;
-            cout << "= " << (d[10] == 1 ? M_ACT + A + M_END : A) << " = " << (d[11] == 1 ? M_ACT + A + M_END : A)
-                << " = " << (d[12] == 1 ? M_ACT + A + M_END : A) << " = " << (d[13] == 1 ? M_ACT + A + M_END : A)
-                << " = " << (d[14] == 1 ? M_ACT + A + M_END : A) << " = " << (d[15] == 1 ? M_ACT + A + M_END : A)
-                << " = " << (d[16] == 1 ? M_ACT + A + M_END : A) << " = " << (d[17] == 1 ? M_ACT + A + M_END : A)
-                << " = " << (d[18] == 1 ? M_ACT + A + M_END : A) << " = " << (d[19] == 1 ? M_ACT + A + M_END : A) << " =" << endl;
-            cout << "=========================================================================================================================" << endl;
-            cout << "= " << (d[20] == 1 ? M_ACT + X + M_END : X) << " = " << (d[21] == 1 ? M_ACT + X + M_END : X)
-                << " = " << (d[22] == 1 ? M_ACT + X + M_END : X) << " = " << (d[23] == 1 ? M_ACT + X + M_END : X)
-                << " = " << (d[24] == 1 ? M_ACT + X + M_END : X) << " = " << (d[25] == 1 ? M_ACT + X + M_END : X)
-                << " = " << (d[26] == 1 ? M_ACT + X + M_END : X) << " = " << (d[27] == 1 ? M_ACT + X + M_END : X)
-                << " = " << (d[28] == 1 ? M_ACT + X + M_END : X) << " = " << (d[29] == 1 ? M_ACT + X + M_END : X) << " =" << endl;
-            cout << "=========================================================================================================================" << endl;
-            cout << "                                                                                                "
-                << "= " << (d[30] == 1 ? M_ACT + "  Door   "s + M_END : "  Door   ") << " = " << (d[31] == 1 ? M_ACT + " Garbage "s + M_END : " Garbage ") << " =" << endl;
-            cout << "=========================================================================================================================" << endl;
+            _cwprintf(L"█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████\n");
+            _cwprintf(L"█ Monster 1 █ Monster 2 █ Monster 3 █ Monster 4 █ Monster 5 █ Monster 6 █ Monster 7 █ Monster 8 █ Monster 9 █ Monster10 █\n");
+            _cwprintf(L"█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████\n");
+            _cwprintf(L"█ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █\n",
+                d[0] == 1 ? sP : P, d[1] == 1 ? sP : P, d[2] == 1 ? sP : P, d[3] == 1 ? sP : P, d[4] == 1 ? sP : P, d[5] == 1 ? sP : P, d[6] == 1 ? sP : P, d[7] == 1 ? sP : P, d[8] == 1 ? sP : P, d[9] == 1 ? sP : P);
+            _cwprintf(L"█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████\n");
+            _cwprintf(L"█ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █\n",
+                d[10] == 1 ? sA : A, d[11] == 1 ? sA : A, d[12] == 1 ? sA : A, d[13] == 1 ? sA : A, d[14] == 1 ? sA : A, d[15] == 1 ? sA : A, d[16] == 1 ? sA : A, d[17] == 1 ? sA : A, d[18] == 1 ? sA : A, d[19] == 1 ? sA : A);
+            _cwprintf(L"█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████\n");
+            _cwprintf(L"█ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █ %s █\n",
+                d[20] == 1 ? sX : X, d[21] == 1 ? sX : X, d[22] == 1 ? sX : X, d[23] == 1 ? sX : X, d[24] == 1 ? sX : X, d[25] == 1 ? sX : X, d[26] == 1 ? sX : X, d[27] == 1 ? sX : X, d[28] == 1 ? sX : X, d[29] == 1 ? sX : X);
+            _cwprintf(L"█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████\n");
+            _cwprintf(L"█                                                                                               █ %s █ %s █\n", d[30] == 1 ? sD : L"  Door   ", d[31] == 1 ? sG : L" Garbage ");
+            _cwprintf(L"█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████\n");
         };
 
-    HANDLE hIn;
-    HANDLE hOut;
-    bool Continue = TRUE;
-    INPUT_RECORD InRec;
-    DWORD NumRead;
+    printf("WARNING: The layout should look normal, like a rectangle box.  If it looks wonky, the program will look broken, so resize the console to fix it.\n");
+    printf("JJ's Monster Controller using Visual C++ for Windows\n");
+    printf("For help, press escape and type 'help'\n");
 
-    cout << "WARNING: The layout should look normal, like a rectangle box.  If it looks wonky, the program will look broken, so resize the console to fix it." << endl;
-    cout << "JJ's Monster Controller using Visual C++ for Windows" << endl;
-    cout << "For help, press escape and type 'help'" << endl;
-
-    cout << "\033[38;2;255;0;0m" << flush;
+    printf("\033[38;2;255;0;0m");
 
     updateVisual(false, data);
 
-    hIn = GetStdHandle(STD_INPUT_HANDLE);
-    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    //hIn = GetStdHandle(STD_INPUT_HANDLE);
+    //hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
     bool door = false;
     int tdoor = 0;
@@ -157,19 +309,17 @@ int main()
             }
         };
 
-    int i = 0;
-
     while (Continue)
     {
-        ReadConsoleInput(hIn, &InRec, 1, &NumRead);
+        ReadConsoleInputA(STDIN, &InRec, 1, &NumRead);
+
+        if (!Continue)
+        {
+            break;
+        }
 
         if (InRec.EventType == KEY_EVENT)
         {
-            i++;
-
-            OutputDebugStringA(std::to_string(i).c_str());
-            OutputDebugStringA(" ");
-
             if (InRec.Event.KeyEvent.bKeyDown)
             {
                 if (InRec.Event.KeyEvent.wRepeatCount <= 1)
@@ -432,6 +582,50 @@ int main()
                             data[31] = 1;
                             twrite("132\n");
                             updateVisual(true, data);
+                        }
+                        break;
+                    case 27:
+                        clearVisual();
+                        printf("> ");
+                        {
+                            char input[128];
+                            fgets(input, 128, stdin);
+                            input[strcspn(input, "\n")] = '\0';
+                            auto psblCmd = strstr(input, "arduino ");
+                            if (strcmp(input, "clear") == 0)
+                            {
+                                system("cls");
+                            }
+                            else if (strcmp(input, "exit") == 0)
+                            {
+                                Continue = FALSE;
+                                continue;
+                            }
+                            else if (strcmp(input, "help") == 0)
+                            {
+                                printf("To get to the command line again, press escape again.\n");
+                                printf("\n");
+                                printf("exit:           exits this program\n");
+                                printf("help:           prints this list of commands\n");
+                                printf("clear:          clears the console\n");
+                                printf("arduino <data>: sends <data> to the arduino\n");
+                            }
+                            else if (strcmp(input, "arduino") == 0)
+                            {
+                                printf("command requires 1 parameter <data>: 'arduino <data>'\n");
+                            }
+                            else if (psblCmd)
+                            {
+                                //char cmd[32];
+                                memmove(psblCmd, psblCmd + 8, strlen(psblCmd) - 7);
+                                sprintf(psblCmd, "%s\n", psblCmd);
+                                twrite(psblCmd);
+                            }
+                            else
+                            {
+                                printf("Unknown command.\n");
+                            }
+                            updateVisual(false, data);
                         }
                         break;
                     default:
@@ -703,4 +897,8 @@ int main()
             }
         }
     }
+    twrite("RESET\n");
+    rthread.detach();
+    printf("\033[0mexiting...");
+    return 0;
 }

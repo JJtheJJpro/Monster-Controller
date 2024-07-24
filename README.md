@@ -7,15 +7,15 @@ This is a number of programs, made in different languages, that have the same pu
 To keep the programs cross-platform, I've been able to use a differnt number of languages:
 
 - C# (WIP, switching to .NET MAUI soon)
-- Tauri (v0.0.9-alpha)
-- Python (console)
-- Node.js (console)
+- Tauri (v0.1-beta)
+- Python (console version)
+- Node.js (console version)
 
 The Arduino code is found in the ArduinoSoftware folder.
 
 ## For Windows Only
 
-I've made a C++ program only suited for Windows platforms (both console and UI).
+I've made a C++ program only suited for Windows platforms (both console and UI).  UI is currently buggy, and console is a working console version.
 
 # The WIP
 
@@ -32,11 +32,13 @@ To Do:
 
 ## Tauri
 
-The Tauri version I'm currently using (v1) is not supported on mobile products.  I have been able to figure out serial port and websocket server hosting with much ease.
+Currently using Tauri v2-Beta.
 
 To Do:
 
-- Update Tauri to Beta v2 for mobile support
+- Setup a functioning Tcp Listener for local network communication
+- Fix minor UI bugs
+- Give error info in a user-friendly way
 
 ## Python and Node.js
 

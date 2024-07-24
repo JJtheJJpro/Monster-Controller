@@ -1,11 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "setupapi.lib")
 
 #include "resource.h"
-#include <string>
 #include <cmath>
 #include <dwmapi.h>
-#include <format>
 #include <map>
 #include <thread>
 #include <windowsx.h>
@@ -15,14 +15,14 @@
 
 #pragma region Variables
 
-wchar_t wClass[100];
-wchar_t wTitle[100];
+char wClass[100];
+char wTitle[100];
 std::map<DWORD, BOOL> keysDown{};
 WPARAM vkUpdate = 0;
 BOOL SpecialDoor = FALSE;
 
 std::thread PortThread;
-void (*asas)(const wchar_t* msg);
+void (*asas)(const char* msg);
 
 HWND hWnd;
 HINSTANCE HInstance;
@@ -45,7 +45,7 @@ HBRUSH DarkRedBrush = CreateSolidBrush(DarkRedColor);
 HBRUSH HoverDarkRedBrush = CreateSolidBrush(HoverDarkRedColor);
 
 HFONT Font = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-LOGFONT LogFont;
+LOGFONTA LogFont;
 
 RECT ClientRegion = { 0, 0, 0, 0 };
 RECT prevClientRegion = { 0, 0, 0, 0 };
@@ -141,19 +141,19 @@ RECT GUISwitch;
 RECT WebsiteSwitch;
 
 constexpr int maxText = 15;
-wchar_t L1text[maxText] = L"Monster 1"; size_t L1size = 9;
-wchar_t L2text[maxText] = L"Monster 2"; size_t L2size = 9;
-wchar_t L3text[maxText] = L"Monster 3"; size_t L3size = 9;
-wchar_t L4text[maxText] = L"Monster 4"; size_t L4size = 9;
-wchar_t L5text[maxText] = L"Monster 5"; size_t L5size = 9;
-wchar_t L6text[maxText] = L"Monster 6"; size_t L6size = 9;
-wchar_t L7text[maxText] = L"Monster 7"; size_t L7size = 9;
-wchar_t L8text[maxText] = L"Monster 8"; size_t L8size = 9;
-wchar_t L9text[maxText] = L"Monster 9"; size_t L9size = 9;
-wchar_t L10text[maxText] = L"Monster 10"; size_t L10size = 10;
+char L1text[maxText] = "Monster 1"; size_t L1size = 9;
+char L2text[maxText] = "Monster 2"; size_t L2size = 9;
+char L3text[maxText] = "Monster 3"; size_t L3size = 9;
+char L4text[maxText] = "Monster 4"; size_t L4size = 9;
+char L5text[maxText] = "Monster 5"; size_t L5size = 9;
+char L6text[maxText] = "Monster 6"; size_t L6size = 9;
+char L7text[maxText] = "Monster 7"; size_t L7size = 9;
+char L8text[maxText] = "Monster 8"; size_t L8size = 9;
+char L9text[maxText] = "Monster 9"; size_t L9size = 9;
+char L10text[maxText] = "Monster 10"; size_t L10size = 10;
 
 HANDLE serial;
-std::wstring ComSerText{};
+char ComSerText[0xFF]{};
 RECT CSTR = { 0, 0, 0, 0 };
 BOOL CSTC = TRUE;
 
@@ -217,7 +217,7 @@ BOOL Connected = FALSE;
 void UpdateCST(HDC hdc)
 {
     SetTextColor(hdc, DarkRedColor);
-    DrawText(hdc, ComSerText.c_str(), (int)ComSerText.size(), &CSTR, DT_SINGLELINE);
+    DrawTextA(hdc, ComSerText, (int)strlen(ComSerText), &CSTR, DT_SINGLELINE);
 }
 
 void SerialComAsyncRead()
@@ -225,7 +225,7 @@ void SerialComAsyncRead()
     while (Connected)
     {
         OVERLAPPED overlapped = { 0 };
-        std::string comp{};
+        char comp[0xFF]{};
         //while ((posTemp = comp.find(L"\r\n")) == std::wstring::npos)
         //{
         //    wchar_t b{};
@@ -251,7 +251,7 @@ void SerialComAsyncRead()
         DWORD bytesRead = 0;
         if (ReadFile(serial, buf, 0xFFF, &bytesRead, &overlapped))
         {
-            comp = buf;
+            strcat(comp, buf);
         }
         else if (GetLastError() == ERROR_IO_PENDING && GetOverlappedResult(serial, &overlapped, &bytesRead, TRUE))
         {
@@ -259,15 +259,15 @@ void SerialComAsyncRead()
             {
                 continue;
             }
-            comp = buf;
+            strcat(comp, buf);
         }
         else
         {
             Connected = FALSE;
-            asas(L"The Box got disconnected.  Plug it back in and press R.");
+            asas("The Box got disconnected.  Plug it back in and press R.");
             continue;
         }
-        OutputDebugStringA(comp.c_str());
+        OutputDebugStringA(comp);
     }
 }
 
@@ -279,7 +279,7 @@ void SerialComWrite(const char* data)
         DWORD nBytesWritten = 0;
         DWORD bytesTransferred = 0;
         DWORD err = 0;
-        OutputDebugString(L"Sending...");
+        //OutputDebugStringA("Sending...");
         BOOL res = WriteFile(serial, data, (DWORD)strlen(data), &nBytesWritten, &overlapped); // not working most likely because read file is already happening.
         if (!res)
         {
@@ -293,11 +293,14 @@ void SerialComWrite(const char* data)
             err = GetLastError();
             if (err != ERROR_IO_INCOMPLETE && err != ERROR_IO_PENDING)
             {
-                MessageBox(NULL, std::format(L"WriteFile failed: {}", err).c_str(), L"Writing error", 0);
+                //MessageBoxA(NULL, std::format("WriteFile failed: {}", err).c_str(), "Writing error", 0);
+                char m[0x7F];
+                sprintf(m, "WriteFile failed: %d", err);
+                MessageBoxA(NULL, m, "Writing error", 0);
             }
         }
     
-        OutputDebugString(L"Done!\r\n");
+        //OutputDebugStringA("Done!\n");
     
         //OutputDebugStringA(data);
     }
@@ -305,20 +308,18 @@ void SerialComWrite(const char* data)
 
 void ActiveMonster(int n, bool on)
 {
-    using namespace std::string_literals;
-
     //auto asdf = std::format("{}{}{}\n", on ? '1' : '0', n < 10 ? "0" : "", n);
     //std::string asdf = (on ? "1"s : "0") + (n < 10 ? "0" : "") + std::to_string(n) + "\n";
-    auto s1 = on ? "1" : "0";
-    auto s2 = n < 10 ? "0" : "";
-    char* sr = (char*)malloc(5);
-    sprintf_s(sr, 5, "%s%s%d\n", s1, s2, n);
+    OutputDebugStringA("in ActiveMonster\n");
+    char sr[5];
+    sprintf_s(sr, 5, "%d%s%d\n", on ? 1 : 0, n < 10 ? "0" : "", n);
     SerialComWrite(sr);
+    OutputDebugStringA("out ActiveMonster\n");
 }
 
-void ConnectToPort(std::wstring com)
+void ConnectToPort(const char* com)
 {
-    serial = CreateFile(com.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+    serial = CreateFileA(com, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
 
     DCB serialParams{};
     serialParams.DCBlength = sizeof(serialParams);
@@ -345,97 +346,96 @@ void ConnectToPort(std::wstring com)
     Connected = TRUE;
 
 #if _DEBUG
-    SerialComWrite("TSNDINF\n");
+    //SerialComWrite("TSNDINF\n");
 #endif
 
     PortThread = std::thread(SerialComAsyncRead);
     PortThread.detach();
 
-    ComSerText = L"Connected!";
+    _memccpy(ComSerText, "Connected!", 0, strlen("Connected!"));
+    ComSerText[10] = '\0';
+    //ComSerText = "Connected!";
     prevClientRegion = { 0, 0, 0, 0 }; // for full gui reset
     InvalidateRect(hWnd, NULL, FALSE);
     InvalidateRect(hWnd, &CSTR, TRUE);
     UpdateWindow(hWnd);
 }
 
-std::wstring FindPort()
+void FindPort(char* name)
 {
-    HDEVINFO hDevInfo = SetupDiGetClassDevs(&GUID_DEVCLASS_PORTS, NULL, NULL, DIGCF_PRESENT);
-
-    SP_DEVINFO_DATA devInfoData{};
-    devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
-    for (DWORD devIndex = 0; SetupDiEnumDeviceInfo(hDevInfo, devIndex, &devInfoData); ++devIndex)
+    HDEVINFO deviceInfoSet = SetupDiGetClassDevsA(&GUID_DEVCLASS_PORTS, nullptr, nullptr, DIGCF_PRESENT | DIGCF_PROFILE);
+    if (deviceInfoSet == INVALID_HANDLE_VALUE)
     {
-        // Get the device hardware IDs
-        wchar_t hardwareIds[MAX_DEVICE_ID_LEN]{};
-        if (SetupDiGetDeviceRegistryProperty(hDevInfo, &devInfoData, SPDRP_HARDWAREID, NULL, (PBYTE)hardwareIds, MAX_DEVICE_ID_LEN, NULL))
+        printf("Error: Unable to get device info set\n");
+        return;
+    }
+
+    SP_DEVINFO_DATA deviceInfoData{};
+    deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+
+    for (DWORD i = 0; SetupDiEnumDeviceInfo(deviceInfoSet, i, &deviceInfoData); i++)
+    {
+        char deviceInstanceId[256];
+        if (SetupDiGetDeviceInstanceIdA(deviceInfoSet, &deviceInfoData, deviceInstanceId, sizeof(deviceInstanceId), nullptr))
         {
-            // Extract VID and PID from hardware IDs
-            wchar_t vid[5] = { 0 };
-            wchar_t pid[5] = { 0 };
+            const char* vidPos = strstr(deviceInstanceId, "VID_");
+            const char* pidPos = strstr(deviceInstanceId, "PID_");
 
-            const wchar_t* vidString = L"VID_";
-            const wchar_t* pidString = L"PID_";
-
-            // Find VID in hardware ID
-            wchar_t* vidStart = wcsstr(hardwareIds, vidString);
-            if (vidStart != nullptr)
+            if (vidPos && pidPos)
             {
-                vidStart += wcslen(vidString);
-                wcsncpy_s(vid, 5, vidStart, 4);
-                vid[4] = L'\0'; // Null-terminate VID
-            }
+                //printf("Device Instance ID: %s\n", deviceInstanceId);
 
-            // Find PID in hardware ID
-            wchar_t* pidStart = wcsstr(hardwareIds, pidString);
-            if (pidStart != nullptr)
-            {
-                pidStart += wcslen(pidString);
-                wcsncpy_s(pid, 5, pidStart, 4);
-                pid[4] = L'\0'; // Null-terminate PID
-            }
+                char svid[5] = { 0 };
+                char spid[5] = { 0 };
 
-            if (wcscmp(vid, L"2341") == 0 && wcscmp(pid, L"0042") == 0)
-            {
-                wchar_t portName[MAX_PATH]{};
-                if (SetupDiGetDeviceRegistryProperty(hDevInfo, &devInfoData, SPDRP_FRIENDLYNAME, NULL, (PBYTE)portName, MAX_DEVICE_ID_LEN, NULL))
+                strncpy_s(svid, vidPos + 4, 4);
+                strncpy_s(spid, pidPos + 4, 4);
+
+                char* end;
+
+                long vid = strtol(svid, &end, 16);
+                if (*end != '\0')
                 {
-                    SetupDiDestroyDeviceInfoList(hDevInfo);
-                    std::wstring check(portName);
-                    if (!check.empty())
+                    printf("err\n");
+                }
+                long pid = strtol(spid, &end, 16);
+                if (*end != '\0')
+                {
+                    printf("err\n");
+                }
+
+                //printf("VID: 0x%4X, PID: 0x%4X\n", vid, pid);
+
+                if (vid == 0x2341 && pid == 0x0042)
+                {
+                    char tname[256]{};
+                    if (SetupDiGetDeviceRegistryPropertyA(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, nullptr, (PBYTE)tname, sizeof(tname), nullptr))
                     {
-                        size_t loc = check.find(L"COM");
-                        check.replace(0, loc, L"");
-                        for (int i = 0; i < check.length(); i++)
+                        char* scom = strstr(tname, "COM");
+                        if (scom)
                         {
-                            if (check[i] == L')')
-                            {
-                                check[i] = L'\0';
-                            }
+                            size_t l = strstr(scom, ")") - scom;
+                            //char com[5];
+                            strncpy(name, scom, l);
+                            name[l] = '\0';
+                            SetupDiDestroyDeviceInfoList(deviceInfoSet);
+                            return;
+                            //buf = com;
                         }
-                        return check;
                     }
                 }
-                //if (SetupDiGetDeviceRegistryProperty(hDevInfo, &devInfoData, SPDRP_DEVICEDESC, NULL, (PBYTE)portName, MAX_DEVICE_ID_LEN, NULL))
-                //{
-                //    SetupDiDestroyDeviceInfoList(hDevInfo);
-                //    return portName;
-                //}
-                //std::wcout << L"VID: " << vid << std::endl;
-                //std::wcout << L"PID: " << pid << std::endl;
             }
         }
     }
 
-    SetupDiDestroyDeviceInfoList(hDevInfo);
-    return L"";
+    SetupDiDestroyDeviceInfoList(deviceInfoSet);
 }
 
 void CycleFont(LONG h, HDC hdc)
 {
     LogFont.lfHeight = h;
     HFONT discard = Font;
-    Font = CreateFontIndirect(&LogFont);
+    Font = CreateFontIndirectA(&LogFont);
     DeleteObject(discard);
     SelectObject(hdc, Font);
 }
@@ -927,25 +927,25 @@ void UpdateButtonsLabelsFull(HDC hdc)
 
     SetTextColor(hdc, DarkRedColor);
     FillRect(hdc, &L1, BlackBrush);
-    DrawText(hdc, L1text, -1, &L1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L1text, -1, &L1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L2, BlackBrush);
-    DrawText(hdc, L2text, -1, &L2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L2text, -1, &L2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L3, BlackBrush);
-    DrawText(hdc, L3text, -1, &L3, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L3text, -1, &L3, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L4, BlackBrush);
-    DrawText(hdc, L4text, -1, &L4, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L4text, -1, &L4, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L5, BlackBrush);
-    DrawText(hdc, L5text, -1, &L5, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L5text, -1, &L5, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L6, BlackBrush);
-    DrawText(hdc, L6text, -1, &L6, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L6text, -1, &L6, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L7, BlackBrush);
-    DrawText(hdc, L7text, -1, &L7, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L7text, -1, &L7, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L8, BlackBrush);
-    DrawText(hdc, L8text, -1, &L8, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L8text, -1, &L8, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L9, BlackBrush);
-    DrawText(hdc, L9text, -1, &L9, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L9text, -1, &L9, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     FillRect(hdc, &L10, BlackBrush);
-    DrawText(hdc, L10text, -1, &L10, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextA(hdc, L10text, -1, &L10, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 void DoSpecBtn(HDC hdc, UINT btn, COLORREF textColor, HBRUSH rectBrush)
@@ -1335,61 +1335,61 @@ void CalculationsAndDrawings(HDC hdc)
             case 1:
             {
                 FillRect(hdc, &L1, BlackBrush);
-                DrawText(hdc, L1text, -1, &L1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L1text, -1, &L1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 2:
             {
                 FillRect(hdc, &L2, BlackBrush);
-                DrawText(hdc, L2text, -1, &L2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L2text, -1, &L2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 3:
             {
                 FillRect(hdc, &L3, BlackBrush);
-                DrawText(hdc, L3text, -1, &L3, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L3text, -1, &L3, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 4:
             {
                 FillRect(hdc, &L4, BlackBrush);
-                DrawText(hdc, L4text, -1, &L4, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L4text, -1, &L4, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 5:
             {
                 FillRect(hdc, &L5, BlackBrush);
-                DrawText(hdc, L5text, -1, &L5, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L5text, -1, &L5, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 6:
             {
                 FillRect(hdc, &L6, BlackBrush);
-                DrawText(hdc, L6text, -1, &L6, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L6text, -1, &L6, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 7:
             {
                 FillRect(hdc, &L7, BlackBrush);
-                DrawText(hdc, L7text, -1, &L7, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L7text, -1, &L7, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 8:
             {
                 FillRect(hdc, &L8, BlackBrush);
-                DrawText(hdc, L8text, -1, &L8, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L8text, -1, &L8, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 9:
             {
                 FillRect(hdc, &L9, BlackBrush);
-                DrawText(hdc, L9text, -1, &L9, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L9text, -1, &L9, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             case 10:
             {
                 FillRect(hdc, &L10, BlackBrush);
-                DrawText(hdc, L10text, -1, &L10, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                DrawTextA(hdc, L10text, -1, &L10, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
             break;
             }
@@ -1645,17 +1645,18 @@ void MousePosCalc(BOOL dblclk = FALSE)
     }
 }
 
-void StartThread(const wchar_t* msg)
+void StartThread(const char* msg)
 {
-    ComSerText = msg;
+    _memccpy(ComSerText, msg, 0, strlen(msg));
+    //ComSerText = msg;
     PortThread = std::thread([]
         {
             CSTC = TRUE;
             InvalidateRect(hWnd, &CSTR, TRUE);
             UpdateWindow(hWnd);
-            std::wstring v = L"";
-            v = FindPort();
-            if (v == L"")
+            char v[0xF]{};
+            FindPort(v);
+            if (strcmp(v, "") == 0)
             {
                 CSTC = TRUE;
                 //ComSerText = L"The Control Box is not connected.  Press R to retry.";
@@ -1734,7 +1735,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             if (down == 32)
             {
                 ButtonsActive[selected - 1] ^= 1;
+                OutputDebugStringA("going into ActiveMonster (LBUTTONCLICK)\n");
                 ActiveMonster(selected, ButtonsActive[selected - 1] == TRUE);
+                OutputDebugStringA("done with ActiveMonster (LBUTTONCLICK)\n");
             }
             InvalidateRect(hwnd, NULL, FALSE);
             UpdateWindow(hwnd);
@@ -1796,7 +1799,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             default:
             {
                 ButtonsActive[selected - 1] ^= 1;
+                OutputDebugStringA("going into ActiveMonster (LBUTTONUP)\n");
                 ActiveMonster(selected, ButtonsActive[selected - 1] == TRUE);
+                OutputDebugStringA("done with ActiveMonster (LBUTTONUP)\n");
             }
             break;
             }
@@ -1895,132 +1900,132 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     case 1:
                         if (L1size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L1text[L1size] = shift ? c : towlower(c);
+                            L1text[L1size] = shift ? c : tolower(c);
                             L1size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 2:
                         if (L2size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L2text[L2size] = shift ? c : towlower(c);
+                            L2text[L2size] = shift ? c : tolower(c);
                             L2size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 3:
                         if (L3size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L3text[L3size] = shift ? c : towlower(c);
+                            L3text[L3size] = shift ? c : tolower(c);
                             L3size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 4:
                         if (L4size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L4text[L4size] = shift ? c : towlower(c);
+                            L4text[L4size] = shift ? c : tolower(c);
                             L4size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 5:
                         if (L5size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L5text[L5size] = shift ? c : towlower(c);
+                            L5text[L5size] = shift ? c : tolower(c);
                             L5size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 6:
                         if (L6size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L6text[L6size] = shift ? c : towlower(c);
+                            L6text[L6size] = shift ? c : tolower(c);
                             L6size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 7:
                         if (L7size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L7text[L7size] = shift ? c : towlower(c);
+                            L7text[L7size] = shift ? c : tolower(c);
                             L7size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 8:
                         if (L8size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L8text[L8size] = shift ? c : towlower(c);
+                            L8text[L8size] = shift ? c : tolower(c);
                             L8size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 9:
                         if (L9size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L9text[L9size] = shift ? c : towlower(c);
+                            L9text[L9size] = shift ? c : tolower(c);
                             L9size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     case 10:
                         if (L10size < maxText)
                         {
-                            TCHAR c = MapVirtualKey((UINT)wParam, MAPVK_VK_TO_CHAR);
+                            char c = MapVirtualKeyA((UINT)wParam, MAPVK_VK_TO_CHAR);
                             //OutputDebugString(std::format(L"converted: {}\r\n", c).c_str());
-                            L10text[L10size] = shift ? c : towlower(c);
+                            L10text[L10size] = shift ? c : tolower(c);
                             L10size++;
                             break;
                         }
                         else
                         {
-                            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                            return DefWindowProcA(hWnd, uMsg, wParam, lParam);
                         }
                     }
                     break;
@@ -2132,7 +2137,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 default:
                     return DefWindowProc(hwnd, uMsg, wParam, lParam);
                 }
+                OutputDebugStringA("going into ActiveMonster (KEYDOWN)\n");
                 ActiveMonster(n, n == 31 ? SpecialDoor : 1);
+                OutputDebugStringA("done with ActiveMonster (KEYDOWN)\n");
                 keysDown[(unsigned long)wParam] = TRUE;
                 vkUpdate = wParam;
                 InvalidateRect(hwnd, NULL, FALSE);
@@ -2144,15 +2151,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             PortThread = std::thread([]
                 {
                     CSTC = TRUE;
-                    ComSerText = L"Connecting to Control Box...";
+                    _memccpy(ComSerText, "Connecting to Control Box...", 0, strlen("Connecting to Control Box..."));
+                    //ComSerText = "Connecting to Control Box...";
                     InvalidateRect(hWnd, &CSTR, TRUE);
                     UpdateWindow(hWnd);
-                    std::wstring v = L"";
-                    v = FindPort();
-                    if (v == L"")
+                    char v[0xF]{};
+                    FindPort(v);
+                    if (strcmp(v, "") == 0)
                     {
                         CSTC = TRUE;
-                        ComSerText = L"The Control Box is not connected.  Press R to retry.";
+                        _memccpy(ComSerText, "The Control Box is not connected.  Press R to retry.", 0, strlen("The Control Box is not connected.  Press R to retry."));
+                        //ComSerText = "The Control Box is not connected.  Press R to retry.";
                         InvalidateRect(hWnd, &CSTR, TRUE);
                         UpdateWindow(hWnd);
                     }
@@ -2275,14 +2284,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     break;
                 case VK_SPACE:
                     keysDown[(unsigned long)wParam] = FALSE;
-                    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+                    return DefWindowProcA(hwnd, uMsg, wParam, lParam);
                 case VK_OEM_PERIOD: // 190
                     ButtonsActive[(n = 32) - 1] = FALSE;
                     break;
                 default:
-                    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+                    return DefWindowProcA(hwnd, uMsg, wParam, lParam);
                 }
+                OutputDebugStringA("going into ActiveMonster (KEYUP)\n");
                 ActiveMonster(n, 0);
+                OutputDebugStringA("done with ActiveMonster (KEYUP)\n");
                 keysDown[(unsigned long)wParam] = FALSE;
                 vkUpdate = wParam;
                 InvalidateRect(hwnd, NULL, FALSE);
@@ -2307,7 +2318,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     return 0;
     }
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    return DefWindowProcA(hwnd, uMsg, wParam, lParam);
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow)
@@ -2323,29 +2334,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     asas = StartThread;
 
-    GetObject(Font, sizeof(LOGFONT), &LogFont);
+    GetObjectA(Font, sizeof(LOGFONT), &LogFont);
 
     shift = GetKeyState(VK_CAPITAL);
 
-    LoadString(NULL, CLASS_NAME, wClass, 100);
-    LoadString(NULL, IDS_TITLE, wTitle, 100);
+    LoadStringA(NULL, CLASS_NAME, wClass, 100);
+    LoadStringA(NULL, IDS_TITLE, wTitle, 100);
 
-    WNDCLASSEX wndClass = {};
+    WNDCLASSEXA wndClass = {};
 
-    wndClass.cbSize = sizeof(WNDCLASSEX);
+    wndClass.cbSize = sizeof(WNDCLASSEXA);
 
     wndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
     wndClass.lpfnWndProc = WindowProc;
     wndClass.cbClsExtra = 0;
     wndClass.cbWndExtra = 0;
     wndClass.hInstance = hInstance;
-    wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICONJJ));
+    wndClass.hIcon = LoadIconA(hInstance, MAKEINTRESOURCEA(IDI_ICONJJ));
     //wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
     wndClass.hbrBackground = CreateSolidBrush(BlackColor);// BB GG RR
-    wndClass.lpszMenuName = MAKEINTRESOURCE(IDC_WINDOWCONTROL);
+    wndClass.lpszMenuName = MAKEINTRESOURCEA(IDC_WINDOWCONTROL);
     wndClass.lpszClassName = wClass;
 
-    RegisterClassEx(&wndClass);
+    RegisterClassExA(&wndClass);
 
     DWORD style = WS_OVERLAPPEDWINDOW;
 
@@ -2362,7 +2373,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
-    hWnd = CreateWindowEx(
+    hWnd = CreateWindowExA(
         0,
         wClass,
         wTitle,
@@ -2386,13 +2397,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     PortThread = std::thread([]
         {
-            ComSerText = L"Connecting to Control Box...";
-            std::wstring v = L"";
-            v = FindPort();
-            if (v == L"")
+            _memccpy(ComSerText, "Connecting to Control Box...", 0, strlen("Connecting to Control Box..."));
+            //ComSerText = "Connecting to Control Box...";
+            char v[0xF]{};
+            FindPort(v);
+            if (strcmp(v, "") == 0)
             {
                 CSTC = TRUE;
-                ComSerText = L"The Control Box is not connected.  Press R to retry.";
+                _memccpy(ComSerText, "The Control Box is not connected.  Press R to retry.", 0, strlen("The Control Box is not connected.  Press R to retry."));
+                //ComSerText = "The Control Box is not connected.  Press R to retry.";
                 InvalidateRect(hWnd, &CSTR, TRUE);
                 UpdateWindow(hWnd);
             }
@@ -2407,10 +2420,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     //UpdateWindow(hWnd);
     MSG msg = {};
-    while (GetMessage(&msg, nullptr, 0, 0))
+    while (GetMessageA(&msg, nullptr, 0, 0))
     {
         TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        DispatchMessageA(&msg);
     }
 
     return 0;

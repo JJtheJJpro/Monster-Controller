@@ -269,7 +269,7 @@ while True:
     elif read == "exit":
         break
     elif read == "help":
-        print('To get to the command line again, press escape again')
+        print('To get to the command line again, press escape again.')
         print()
         print('exit:           exits this program')
         print('help:           prints this list of commands')

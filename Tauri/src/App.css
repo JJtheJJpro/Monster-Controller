@@ -17,7 +17,8 @@ div.com {
     margin: 20px;
 }
 
-td, th {
+td,
+th {
     padding: 30px;
     border: solid 2px;
     cursor: pointer;
@@ -57,19 +58,23 @@ td.empty {
     pointer-events: none;
 }
 
-td.r, th.r {
+td.r,
+th.r {
     border-right: none;
 }
 
-td.l, th.l {
+td.l,
+th.l {
     border-left: none;
 }
 
-td:hover, th:hover {
+td:hover,
+th:hover {
     background-color: #220000;
 }
 
-td:active, th:active {
+td:active,
+th:active {
     background-color: #800000;
 }
 

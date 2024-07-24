@@ -1,29 +1,27 @@
 [package]
 name = "monster-controller"
-version = "0.0.9"
+version = "0.1.0"
 description = "Monster Controller"
 authors = ["JJ"]
 edition = "2021"
 
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "monster_controller_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = ["shell-open"] }
+tauri = { version = "2.0.0-beta", features = [] }
+tauri-plugin-shell = "2.0.0-beta"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-serialport = "4.3.0"
-dialog = "0.3.0"
+serialport = "4.4.0"
 serial2 = "0.2.26"
 tungstenite = "0.23.0"
 
 [target.'cfg(windows)'.dependencies]
 wmi = "0.13.3"
-winapi = { version = "0.3.9", features = ["fileapi", "handleapi", "winbase", "winnt", "ioapiset"] }
-
-[target.'cfg(unix)'.dependencies]
-libudev-sys = "0.1.4"
-nix = { version = "0.29.0", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }
-
-[features]
-custom-protocol = ["tauri/custom-protocol"]

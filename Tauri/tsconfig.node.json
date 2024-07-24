@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    // These two are here just to get rid of the error.
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}
