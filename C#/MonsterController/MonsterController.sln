@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.002.0
+VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonsterController", "MonsterController.csproj", "{1D79B9E7-A96F-4F53-9EB3-190A9B5E282F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonsterController", "MonsterController\MonsterController.csproj", "{F83349A0-97DC-493F-B5CB-3F7FBE121955}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1D79B9E7-A96F-4F53-9EB3-190A9B5E282F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D79B9E7-A96F-4F53-9EB3-190A9B5E282F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D79B9E7-A96F-4F53-9EB3-190A9B5E282F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D79B9E7-A96F-4F53-9EB3-190A9B5E282F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F83349A0-97DC-493F-B5CB-3F7FBE121955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F83349A0-97DC-493F-B5CB-3F7FBE121955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F83349A0-97DC-493F-B5CB-3F7FBE121955}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F83349A0-97DC-493F-B5CB-3F7FBE121955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F83349A0-97DC-493F-B5CB-3F7FBE121955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F83349A0-97DC-493F-B5CB-3F7FBE121955}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C137A9C7-B579-4945-B00C-C1A65E4EC1A7}
+		SolutionGuid = {1EDBB7F9-C15A-41A2-8DC3-3EE661AEA020}
 	EndGlobalSection
 EndGlobal

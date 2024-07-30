@@ -22,6 +22,10 @@ serde_json = "1"
 serialport = "4.4.0"
 serial2 = "0.2.26"
 tungstenite = "0.23.0"
+local-ip-address = "0.6.1"
 
 [target.'cfg(windows)'.dependencies]
 wmi = "0.13.3"
+
+[target.'cfg(unix)'.dependencies]
+libudev-sys = "0.1.4"

@@ -2,5 +2,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
+    #[cfg(windows)]
+    {
+        // change border color to red
+    }
     monster_controller_lib::run()
 }

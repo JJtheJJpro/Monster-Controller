@@ -1,3 +1,6 @@
+#[cfg(unix)]
+extern crate libudev_sys as udev;
+
 use serial2::SerialPort;
 use serialport::SerialPortType;
 use std::{
@@ -143,6 +146,8 @@ fn port_listener(tx: &Sender<String>) {
         return;
     }
 
+    tx.send(String::from("connecting")).unwrap();
+
     // Connect and loop incoming messages
     unsafe {
         PORT = SerialPort::open(name, 9600).unwrap();
@@ -186,36 +191,39 @@ fn port_listener(tx: &Sender<String>) {
 /// Either starts listening for local communication or ends it.
 #[command]
 fn local_server(on: bool) {
-    unsafe {
-        if on {
-            SRV = TcpListener::bind("192.168.1.93:8080").unwrap();
-            println!("Listening on 192.168.1.93:8080");
-    
-            #[cfg(windows)]
-            println!("Possible Windows Firewall rule addition needed");
-    
-            for stream in SRV.incoming() {
-                let stream = stream.unwrap();
-                thread::spawn(|| {
-                    let addr = stream.peer_addr().unwrap().ip();
-                    let mut websocket = tungstenite::accept(stream).unwrap();
-                    println!("{addr} is Connected");
-    
-                    loop {
-                        let msg = websocket.read().unwrap();
-                        println!("{addr}: {msg}");
-    
-                        if msg.is_text() || msg.is_binary() {
-                            websocket.write(msg).unwrap();
-                            websocket.write("Test".into()).unwrap();
+    thread::spawn(move || {
+        unsafe {
+            if on {
+                let ip = local_ip_address::local_ip().unwrap_or(std::net::IpAddr::V4(std::net::Ipv4Addr::new(192, 186, 1, 1)));
+
+                SRV = TcpListener::bind(format!("{}:8080", ip)).unwrap();
+                println!("Listening on {}:8080", ip);
+        
+                #[cfg(windows)]
+                println!("Possible Windows Firewall rule addition needed");
+        
+                while let Ok(stream) = SRV.accept() {
+                    thread::spawn(|| {
+                        let addr = stream.0.peer_addr().unwrap().ip();
+                        let mut websocket = tungstenite::accept(stream.0).unwrap();
+                        println!("{addr} is Connected");
+        
+                        loop {
+                            let msg = websocket.read().unwrap();
+                            println!("{addr}: {msg}");
+        
+                            if msg.is_text() || msg.is_binary() {
+                                websocket.write(msg).unwrap();
+                                websocket.write("Test".into()).unwrap();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            } else {
+                SRV = zeroed();
             }
-        } else {
-            SRV = zeroed();
         }
-    }
+    });
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -243,7 +251,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![send])
+        .invoke_handler(tauri::generate_handler![send, local_server])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

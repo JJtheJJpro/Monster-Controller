@@ -17,12 +17,12 @@ function App() {
         "Monster 9",
         "Monster 10"]);
     const [connected, setConnected] = useState(false);
-    const [actType, setInput] = useState(1); // 0 - keyboard, 1 - GUI, 2 - Website
+    const [actType, setInput] = useState<0 | 1 | 2>(1); // 0 - keyboard, 1 - GUI, 2 - Website
     const [activeMonsters, setActiveMonsters] = useState([...Array(32)].map(() => false));
     const [keyLastPressed, setKeyLastPressed] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log(connected);
+        invoke('local_server', { on: actType == 2 });
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         const unlisten = listen<String>('data-received', (event) => {
@@ -64,11 +64,6 @@ function App() {
     }, [connected, actType, keyLastPressed]);
 
     function handleKeyDown(e: KeyboardEvent) {
-        console.log(`${e.code} down`);
-        console.log(`connected: ${connected}`);
-        console.log(`actType: ${actType}`);
-        console.log(`keyLastPressed: ${keyLastPressed}`)
-        console.log(`e.code: ${e.code}`)
         if (connected && actType == 0 && keyLastPressed != e.code) {
             setKeyLastPressed(e.code);
 
@@ -240,11 +235,6 @@ function App() {
         }
     }
     function handleKeyUp(e: KeyboardEvent) {
-        console.log(`${e.code} up`);
-        console.log(`connected: ${connected}`);
-        console.log(`actType: ${actType}`);
-        console.log(`keyLastPressed: ${keyLastPressed}`)
-        console.log(`e.code: ${e.code}`)
         if (connected && actType == 0) {
             setKeyLastPressed(null);
 
@@ -412,11 +402,15 @@ function App() {
     }
 
     async function sendcmd() {
-        await invoke("send", { msg: cmdSend });
+        if (connected) {
+            await invoke("send", { data: cmdSend });
+        }
     }
 
-    async function send(msg: String) {
-        await invoke("send", { msg });
+    async function send(data: String) {
+        if (connected) {
+            await invoke("send", { data });
+        }
     }
 
     /**

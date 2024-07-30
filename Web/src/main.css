@@ -1,0 +1,27 @@
+:root {
+    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 400;
+
+    color: red;
+    background-color: #000000;
+    
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+* {
+    margin: 0;
+    max-height: 100%;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
