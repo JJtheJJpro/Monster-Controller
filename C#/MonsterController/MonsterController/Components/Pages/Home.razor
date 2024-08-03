@@ -1,5 +1,202 @@
 ﻿@page "/"
+@using System.IO.Ports
+@inject IJSRuntime JS
 
-<h1>Hello, world!</h1>
+<div>
+	<div class="com">
+		<p>@connectState</p>
+		<input title="Command to send to arduino" placeholder="Put custom command here" type="text" value=@cmdSend @oninput=@(e => cmdSend = (string?)e.Value ?? "") @onkeydown=@(e => {
+			if (e.Code.ToString() == "Enter")
+			{
+				SendCmd();
+			}
+		}) />
+		<button type="button" @onclick=@SendCmd>Send</button>
+	</div>
 
-Welcome to your new app.
+	<table class=@(connected && actType == InputType.GUI ? "" : "disabled")>
+		<thead>
+			<tr>
+				@for (int _i = 0; _i < monsterNames.Length; _i++)
+				{
+					int i = _i;
+					<th class=@(i == 0 ? "l" : i == 9 ? "r" : "") title=@($"Double click to change the name of {monsterNames[i]}") @ondblclick=@(async () => {
+						string input = await JS.InvokeAsync<string>("showPrompt", "Enter in a new monster name", monsterNames[i]);
+						if (true)
+						{
+							monsterNames[i] = input;
+						}
+					})>@monsterNames[i]</th>
+				}
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				@for (int _i = 0; _i < 10; _i++)
+				{
+					int i = _i;
+					<td class=@(activeMonsters[i] ? (i == 0 ? "l active" : i == 9 ? "r active" : "active") : (i == 0 ? "l" : i == 9 ? "r" : "")) @onclick=@(() => {
+						activeMonsters[i] = !activeMonsters[i];
+						ParseMonster(MonsterType.Power, i + 1, activeMonsters[i]);
+					})>
+						Power
+					</td>
+				}
+			</tr>
+			<tr>
+				@for (int _i = 0; _i < 10; _i++)
+				{
+					int i = _i;
+					<td class=@(activeMonsters[i + 10] ? (i == 0 ? "l active" : i == 9 ? "r active" : "active") : (i == 0 ? "l" : i == 9 ? "r" : "")) @onclick=@(() => {
+						activeMonsters[i + 10] = !activeMonsters[i + 10];
+						ParseMonster(MonsterType.Activate, i + 1, activeMonsters[i + 10]);
+					})>
+						Activate
+					</td>
+				}
+			</tr>
+			<tr>
+				@for (int _i = 0; _i < 10; _i++)
+				{
+					int i = _i;
+					<td class=@(activeMonsters[i + 20] ? (i == 0 ? "l active" : i == 9 ? "r active" : "active") : (i == 0 ? "l" : i == 9 ? "r" : "")) @onclick=@(() => {
+						activeMonsters[i + 20] = !activeMonsters[i + 20];
+						ParseMonster(MonsterType.AltActivate, i + 1, activeMonsters[i + 20]);
+					})>
+						Alternate Activate
+					</td>
+				}
+			</tr>
+			<tr>
+				@for (int i = 0; i < 8; i++)
+				{
+					<td class="empty" />
+				}
+				<td class=@(activeMonsters[30] ? "active" : "") @onclick=@(() => {
+					activeMonsters[30] = !activeMonsters[30];
+					ParseMonster(MonsterType.Door, 0, activeMonsters[30]);
+				})>
+					Door
+				</td>
+				<td class=@(activeMonsters[31] ? "r active" : "r") @onmousedown=@(() => {
+					activeMonsters[31] = true;
+					ParseMonster(MonsterType.Garbage, 0, true);
+				}) @onmouseup=@(() => {
+					activeMonsters[31] = false;
+					ParseMonster(MonsterType.Garbage, 0, false);
+				})>
+					Garbage
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class=@($"switch{(connected ? "" : " disabled")}")>
+		<tbody>
+			<tr>
+				<td class=@($"switch l{(actType == InputType.Keyboard ? (connected ? " active" : " dactive") : "")}") @onclick=@(() => actType = InputType.Keyboard)>
+					Keyboard
+				</td>
+				<td class=@($"switch{(actType == InputType.GUI ? (connected ? " active" : " dactive") : "")}") @onclick=@(() => actType = InputType.GUI)>
+					GUI
+				</td>
+				<td class=@($"switch r{(actType == InputType.Website ? (connected ? " active" : " dactive") : "")}") @onclick=@(() => actType = InputType.Website)>
+					Website
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+@code {
+	private enum InputType
+	{
+		Keyboard,
+		GUI,
+		Website
+	}
+	private enum MonsterType
+	{
+		Power,
+		Activate,
+		AltActivate,
+		Door,
+		Garbage
+	}
+
+	private string connectState = "Listening for USB changes...";
+	private string cmdSend = "";
+	private string[] monsterNames =
+	[
+	"Monster 1",
+	"Monster 2",
+	"Monster 3",
+	"Monster 4",
+	"Monster 5",
+	"Monster 6",
+	"Monster 7",
+	"Monster 8",
+	"Monster 9",
+	"Monster 10"
+	];
+	private bool connected = false;
+	private InputType actType = InputType.GUI;
+	private bool[] activeMonsters = (bool[])Array.CreateInstance(typeof(bool), 32);
+	private string? keyLastPressed = null;
+
+	protected override void OnInitialized()
+	{
+		SerialPortCom.Initialize();
+
+		base.OnInitialized();
+	}
+
+	private async void SendCmd()
+	{
+		string input = await JS.InvokeAsync<string>("showPrompt", "Enter in a new monster name", monsterNames[0]);
+	}
+	private void Send(string data)
+	{
+
+	}
+
+	private void ParseMonster(MonsterType type, int number, bool on)
+	{
+		ArgumentOutOfRangeException.ThrowIfLessThan(number, 1, nameof(number));
+		ArgumentOutOfRangeException.ThrowIfGreaterThan(number, 10, nameof(number));
+
+		if (type is MonsterType.Door or MonsterType.Garbage)
+		{
+			Send($"{(on ? 1 : 0)}{(type == MonsterType.Door ? 31 : 32)}");
+		}
+		else
+		{
+			if (type == MonsterType.Activate)
+			{
+				number += 10;
+			}
+			else if (type == MonsterType.AltActivate)
+			{
+				number += 20;
+			}
+			Send($"{(on ? 1 : 0)}{(number < 10 ? "0" : "")}{number}");
+		}
+	}
+
+	private static class SerialPortCom
+	{
+		public static SerialPort? sp;
+
+		public static bool Initialize()
+		{
+			string[] names = SerialPort.GetPortNames();
+
+			foreach (string name in names)
+			{
+				System.Diagnostics.Debug.WriteLine(name);
+			}
+
+			return sp != null;
+		}
+	}
+}

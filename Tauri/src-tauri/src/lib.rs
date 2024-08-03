@@ -1,6 +1,3 @@
-#[cfg(unix)]
-extern crate libudev_sys as udev;
-
 use serial2::SerialPort;
 use serialport::SerialPortType;
 use std::{
@@ -11,6 +8,9 @@ use std::{
     time::Duration,
 };
 use tauri::{command, Emitter, Manager};
+
+//#[cfg(unix)]
+//use std::os::fd::{AsRawFd, RawFd};
 
 /// The presented port for communication with the Arduino.
 static mut PORT: SerialPort = unsafe { zeroed() };
@@ -27,95 +27,59 @@ fn send(data: &str) {
 }
 
 /// Listens for USB changes.
+#[cfg(windows)]
 fn listen_usb() {
     #[cfg(windows)]
     {
         let com_con = wmi::COMLibrary::new().unwrap();
         let wmi_con = wmi::WMIConnection::new(com_con).unwrap();
-        let _events = wmi_con
+
+        for _ in wmi_con
             .raw_notification::<std::collections::HashMap<String, wmi::Variant>>(
                 "SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2",
             )
-            .unwrap();
-    }
-    #[cfg(unix)]
-    {
-        unsafe {
-            let udev = udev::udev_new();
-            if udev.is_null() {
-                eprintln!("Failed to create udev object");
-                return;
-            }
-
-            let monitor = udev::udev_monitor_new_from_netlink(
-                udev,
-                CStr::from_bytes_with_nul_unchecked(b"udev\0").as_ptr(),
-            );
-            if monitor.is_null() {
-                eprintln!("Failed to create udev monitor");
-                udev::udev_unref(udev);
-                return;
-            }
-
-            if udev::udev_monitor_enable_receiving(monitor) < 0 {
-                eprintln!("Failed to enable receiving udev events");
-                udev::udev_monitor_unref(monitor);
-                udev::udev_unref(udev);
-                return;
-            }
-
-            let fd = udev::udev_monitor_get_fd(monitor);
-            if fd < 0 {
-                eprintln!("Failed to get file descriptor for udev monitor");
-                udev::udev_monitor_unref(monitor);
-                udev::udev_unref(udev);
-                return;
-            }
-
-            let mut fds = [nix::libc::pollfd {
-                fd,
-                events: nix::libc::POLLIN,
-                revents: 0,
-            }];
-
-            println!("Listening for USB changes...");
-
-            loop {
-                let ret = nix::libc::poll(fds.as_mut_ptr(), 1, -1);
-                if ret < 0 {
-                    eprintln!("Poll error");
-                    break;
-                }
-
-                if fds[0].revents & nix::libc::POLLIN != 0 {
-                    let device = udev::udev_monitor_receive_device(monitor);
-                    if !device.is_null() {
-                        let action_ptr = udev::udev_device_get_action(device);
-                        let devnode_ptr = udev::udev_device_get_devnode(device);
-                        if !action_ptr.is_null() && !devnode_ptr.is_null() {
-                            let action = CStr::from_ptr(action_ptr).to_str().unwrap();
-                            let devnode = CStr::from_ptr(devnode_ptr).to_str().unwrap();
-
-                            println!("Action: {action}, Device Node: {devnode}");
-
-                            if action == "bind" {
-                                return;
-                            }
-                        } else {
-                            eprintln!("Received a null pointer for action or devnode");
-                        }
-
-                        udev::udev_device_unref(device);
-                    } else {
-                        eprintln!("Received a null device");
-                    }
-                }
-            }
-
-            udev::udev_monitor_unref(monitor);
-            udev::udev_unref(udev);
+            .unwrap()
+        {
+            break;
         }
     }
+    /*
+    #[cfg(unix)]
+    {
+        let context = libudev::Context::new().unwrap();
+        let mut monitor = libudev::Monitor::new(&context).unwrap();
+        monitor.match_subsystem("usb").unwrap();
+        let mut monitor_socket = monitor.listen().unwrap();
+
+        let fd: RawFd = monitor_socket.as_raw_fd();
+
+        let mut fds = [libc::pollfd {
+            fd,
+            events: libc::POLLIN,
+            revents: 0,
+        }];
+
+        loop {
+            let res = unsafe { libc::poll(fds.as_mut_ptr(), 1, -1) };
+            if res == -1 {
+                eprintln!("Poll failed: {}", std::io::Error::last_os_error());
+                break;
+            }
+
+            if fds[0].revents & libc::POLLIN != 0 {
+                match monitor_socket.receive_event() {
+                    Some(event) => match event.event_type() {
+                        libudev::EventType::Add => {
+                            break;
+                        }
+                        _ => continue,
+                    },
+                    None => eprintln!("Failed to receive event"),
+                }
+            }
+        }
+    }
+    */
 }
 
 /// Finds and, if successful, connects to the Arduino.
@@ -165,6 +129,7 @@ fn port_listener(tx: &Sender<String>) {
                 }
                 Err(err2) => {
                     tx.send(format!("err: {err2}")).unwrap();
+                    tx.send(String::from("disconnected")).unwrap();
                     break;
                 }
             }
@@ -191,37 +156,37 @@ fn port_listener(tx: &Sender<String>) {
 /// Either starts listening for local communication or ends it.
 #[command]
 fn local_server(on: bool) {
-    thread::spawn(move || {
-        unsafe {
-            if on {
-                let ip = local_ip_address::local_ip().unwrap_or(std::net::IpAddr::V4(std::net::Ipv4Addr::new(192, 186, 1, 1)));
+    thread::spawn(move || unsafe {
+        if on {
+            let ip = local_ip_address::local_ip().unwrap_or(std::net::IpAddr::V4(
+                std::net::Ipv4Addr::new(192, 186, 1, 1),
+            ));
 
-                SRV = TcpListener::bind(format!("{}:8080", ip)).unwrap();
-                println!("Listening on {}:8080", ip);
-        
-                #[cfg(windows)]
-                println!("Possible Windows Firewall rule addition needed");
-        
-                while let Ok(stream) = SRV.accept() {
-                    thread::spawn(|| {
-                        let addr = stream.0.peer_addr().unwrap().ip();
-                        let mut websocket = tungstenite::accept(stream.0).unwrap();
-                        println!("{addr} is Connected");
-        
-                        loop {
-                            let msg = websocket.read().unwrap();
-                            println!("{addr}: {msg}");
-        
-                            if msg.is_text() || msg.is_binary() {
-                                websocket.write(msg).unwrap();
-                                websocket.write("Test".into()).unwrap();
-                            }
+            SRV = TcpListener::bind(format!("{}:8080", ip)).unwrap();
+            println!("Listening on {}:8080", ip);
+
+            #[cfg(windows)]
+            println!("Possible Windows Firewall rule addition needed");
+
+            while let Ok(stream) = SRV.accept() {
+                thread::spawn(|| {
+                    let addr = stream.0.peer_addr().unwrap().ip();
+                    let mut websocket = tungstenite::accept(stream.0).unwrap();
+                    println!("{addr} is Connected");
+
+                    loop {
+                        let msg = websocket.read().unwrap();
+                        println!("{addr}: {msg}");
+
+                        if msg.is_text() || msg.is_binary() {
+                            websocket.write(msg).unwrap();
+                            websocket.write("Test".into()).unwrap();
                         }
-                    });
-                }
-            } else {
-                SRV = zeroed();
+                    }
+                });
             }
+        } else {
+            SRV = zeroed();
         }
     });
 }
@@ -235,7 +200,12 @@ pub fn run() {
 
             thread::spawn(move || loop {
                 port_listener(&tx);
+
+                #[cfg(windows)]
                 listen_usb();
+
+                #[cfg(unix)]
+                thread::sleep(Duration::from_secs(10));
             });
 
             thread::spawn(move || {

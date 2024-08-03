@@ -33,6 +33,10 @@ function App() {
                     setConnected(false);
                     setConnectState("Failed to read the arduino port (most likely disconnected).  Listening for USB changes...");
                     break;
+                case "disconnected":
+                    setConnected(false);
+                    setConnectState("Arduino disconnected.  Listening for USB changes...");
+                    break;
                 case "available_ports err":
                     console.log("um");
                     setConnected(false);

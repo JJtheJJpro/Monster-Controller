@@ -1,22 +1,30 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\",
+  "WorkspaceRootPath": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victor capulet\\monsters remastered\\c#\\monstercontroller\\monstercontroller\\components\\pages\\weather.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\components\\pages\\weather.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victorcapulet\\monstersremastered\\c#\\monstercontroller\\monstercontroller\\platforms\\android\\spproxy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\platforms\\android\\spproxy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victor capulet\\monsters remastered\\c#\\monstercontroller\\monstercontroller\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victorcapulet\\monstersremastered\\c#\\monstercontroller\\monstercontroller\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victor capulet\\monsters remastered\\c#\\monstercontroller\\monstercontroller\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victorcapulet\\monstersremastered\\c#\\monstercontroller\\monstercontroller\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victor capulet\\monsters remastered\\c#\\monstercontroller\\monstercontroller\\components\\pages\\counter.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\components\\pages\\counter.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victorcapulet\\monstersremastered\\c#\\monstercontroller\\monstercontroller\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victorcapulet\\monstersremastered\\c#\\monstercontroller\\monstercontroller\\wwwroot\\js\\interop.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\wwwroot\\js\\interop.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|f:\\victorcapulet\\monstersremastered\\c#\\monstercontroller\\monstercontroller\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F83349A0-97DC-493F-B5CB-3F7FBE121955}|MonsterController\\MonsterController.csproj|solutionrelative:monstercontroller\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,54 +46,80 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Counter.razor",
-              "DocumentMoniker": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Counter.razor",
-              "RelativeDocumentMoniker": "MonsterController\\Components\\Pages\\Counter.razor",
-              "ToolTip": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Counter.razor",
-              "RelativeToolTip": "MonsterController\\Components\\Pages\\Counter.razor",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAnAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-29T21:17:03.931Z",
+              "DocumentIndex": 0,
+              "Title": "SPProxy.cs",
+              "DocumentMoniker": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\Platforms\\Android\\SPProxy.cs",
+              "RelativeDocumentMoniker": "MonsterController\\Platforms\\Android\\SPProxy.cs",
+              "ToolTip": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\Platforms\\Android\\SPProxy.cs",
+              "RelativeToolTip": "MonsterController\\Platforms\\Android\\SPProxy.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAA5AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-03T05:31:02.456Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Weather.razor",
-              "DocumentMoniker": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Weather.razor",
-              "RelativeDocumentMoniker": "MonsterController\\Components\\Pages\\Weather.razor",
-              "ToolTip": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Weather.razor",
-              "RelativeToolTip": "MonsterController\\Components\\Pages\\Weather.razor",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAADYAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-29T21:16:56.347Z",
+              "DocumentIndex": 1,
+              "Title": "MauiProgram.cs",
+              "DocumentMoniker": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\MauiProgram.cs",
+              "RelativeDocumentMoniker": "MonsterController\\MauiProgram.cs",
+              "ToolTip": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\MauiProgram.cs",
+              "RelativeToolTip": "MonsterController\\MauiProgram.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-03T01:49:11.922Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "interop.js",
+              "DocumentMoniker": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\wwwroot\\js\\interop.js",
+              "RelativeDocumentMoniker": "MonsterController\\wwwroot\\js\\interop.js",
+              "ToolTip": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\wwwroot\\js\\interop.js",
+              "RelativeToolTip": "MonsterController\\wwwroot\\js\\interop.js",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAgAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-08-02T06:02:51.78Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "index.html",
+              "DocumentMoniker": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\wwwroot\\index.html",
+              "RelativeDocumentMoniker": "MonsterController\\wwwroot\\index.html",
+              "ToolTip": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\wwwroot\\index.html",
+              "RelativeToolTip": "MonsterController\\wwwroot\\index.html",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2024-08-01T15:29:54.76Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "app.css",
+              "DocumentMoniker": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\wwwroot\\css\\app.css",
+              "RelativeDocumentMoniker": "MonsterController\\wwwroot\\css\\app.css",
+              "ToolTip": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\wwwroot\\css\\app.css",
+              "RelativeToolTip": "MonsterController\\wwwroot\\css\\app.css",
+              "ViewState": "AQIAAHEAAAAAAAAAAAD4vzUAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2024-08-01T15:25:25.994Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Home.razor",
-              "DocumentMoniker": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Home.razor",
+              "DocumentMoniker": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Home.razor",
               "RelativeDocumentMoniker": "MonsterController\\Components\\Pages\\Home.razor",
-              "ToolTip": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Home.razor",
+              "ToolTip": "F:\\VictorCapulet\\MonstersRemastered\\C#\\MonsterController\\MonsterController\\Components\\Pages\\Home.razor",
               "RelativeToolTip": "MonsterController\\Components\\Pages\\Home.razor",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "ViewState": "AQIAAJkAAAAAAAAAAAAAALsAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-29T16:16:32.983Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "index.html",
-              "DocumentMoniker": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\wwwroot\\index.html",
-              "RelativeDocumentMoniker": "MonsterController\\wwwroot\\index.html",
-              "ToolTip": "F:\\Victor Capulet\\Monsters Remastered\\C#\\MonsterController\\MonsterController\\wwwroot\\index.html",
-              "RelativeToolTip": "MonsterController\\wwwroot\\index.html",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAhAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2024-07-29T16:17:00.328Z",
+              "WhenOpened": "2024-08-01T15:19:18.477Z",
               "EditorCaption": ""
             }
           ]
